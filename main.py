@@ -23,8 +23,8 @@ def run_llm(domain: str, tid: str, cid: str) -> dict:
     return 0
 
 def send_post_for_callback(response: str, tid: str) -> dict:
-    # url = "https://app.synsona.com/version-test/api/1.1/wf/callback_response"
-    url = "https://app.synsona.com/api/1.1/wf/callback_response"
+    url = "https://app.synsona.com/version-test/api/1.1/wf/callback_response"
+    # url = "https://app.synsona.com/api/1.1/wf/callback_response"
     payload = {
         "response": "response_string_okay",
         "input_tokens": 0,
