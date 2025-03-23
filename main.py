@@ -46,7 +46,7 @@ def process_request(domain: str, tid: str, cid: str) -> dict:
 
     return {"confirm": tid}
 
-@app.post("/echo/")
+@app.post("/pie/")
 async def echo(request: EchoRequest, req: Request):
     auth_header = req.headers.get("Authorization")
     if (auth_header is None or not auth_header.startswith("Bearer ")):
