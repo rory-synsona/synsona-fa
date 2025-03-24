@@ -2,5 +2,5 @@ fastapi
 hypercorn
 httpx
 langchain
-openai
+langchain-openai
 python-dotenv
