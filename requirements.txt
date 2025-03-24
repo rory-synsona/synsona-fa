@@ -4,4 +4,3 @@ httpx
 langchain
 openai
 python-dotenv
-os
