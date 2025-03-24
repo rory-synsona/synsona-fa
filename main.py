@@ -7,10 +7,10 @@ import asyncio
 from dotenv import load_dotenv
 from langchain.chat_models import init_chat_model
 from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_community.chat_models import ChatPerplexity
+from langchain_core.prompts import ChatPromptTemplate
 
 load_dotenv()
-pplx_api_key = os.getenv("PPLX_API_KEY")
-openai_api_key = os.getenv("OPENAI_API_KEY")
 
 app = FastAPI()
 
@@ -39,12 +39,10 @@ def run_openai(domain: str, tid: str, cid: str) -> dict:
     return response
 
 def run_sonar(domain: str, tid: str, cid: str) -> str:
-    model = init_chat_model("gpt-4o-mini", model_provider="openai")
-    messages = [
-        SystemMessage("Translate the following from English into Italian"),
-        HumanMessage("hi!"),
-    ]
-    response = model.invoke(messages)
+    prompt = ChatPromptTemplate.from_messages([("system", "Translate the following from English into Italian"), ("human", "{myprompt}")])
+    chat = ChatPerplexity(model="sonar")
+    chain = prompt | chat
+    response = chain.invoke({"myprompt": "What is the time in Sydney, Australia?"})
     return response.content
 
 async def send_post_for_callback(llm_response_content: str, tid: str) -> dict:
