@@ -48,10 +48,40 @@ def run_sonar(domain: str, tid: str, cid: str) -> str:
     return response.content
 
 def run_sonar_v1(request_data: EchoRequest) -> str:
-    prompt = ChatPromptTemplate.from_messages([("system", "Translate the following from English into Italian"), ("human", "{myprompt}")])
-    chat = ChatPerplexity(model="sonar")
-    chain = prompt | chat
-    response = chain.invoke({"myprompt": "What is the time in Tokyo, Japan?"})
+    print("run_sonar_v1: ", request_data.target_url)
+
+    #messages = [
+    #    ("system", "Determine the official NAME of the company with official website as follows. Only reply with the name."),
+    #    ("human", "{target_url}")
+    #]
+    messages = [
+        ("system",
+         """ROLE: You are a research assistant for 'Phriendly Phishing' (https://www.phriendlyphishing.com). Phriendly Phishing specializes in security awareness and phishing simulation training. The company offers tailored, automated training solutions that empower organizations to combat cyber threats, including phishing and ransomware. Their value proposition lies in delivering engaging, customizable learning experiences for each department that foster long-lasting behavioral change among employees, thereby reducing the risk of financial and reputational damage from cyber attacks. Phriendly Phishing's content is recognized for being localized and more relevant to Australian and New Zealand audiences, contributing to an increase in completion rates compared to other offerings.
+         
+        OBJECTIVE: The user will assign you a target account. You are to thoroughly research the company to find potential triggers for engagement related to topics that resonate with Phriendly Phishing such as: 'cyber security', 'phishing attacks', 'cyber attacks', 'ransomware' or changes in leadership like the 'Chief Information Security Officer (CISO)'.
+
+        SOURCES: Your research about the target account must be published within the last 12 months and include these sources:
+        1. News about the target account
+        2. News about the target account's main competitors
+        3. News about the target account's industry
+        4. News about companies in Australia or New Zealand
+        5. (If they are publicly traded) Review their annual report
+        6. (If they are publicly traded) Review their latest earnings report
+        
+        OUTPUT TEMPLATE: For each trigger, use the following template:
+        Name: Brief name of the trigger
+        Source: URL of the source where the trigger was found
+        Date: Publish date of the article
+        Summary: Brief summary of the trigger with high brevity for a c-level executive, focusing on figures, metrics, monitory values, and percentages
+        Relevance: Explain why this trigger is relevant to Phriendly Phishing
+        
+        Your response must only include the triggers and exclude introduction and concluing summary."""),
+        ("human", "Target account: {target_url}")
+    ]
+    prompt_template = ChatPromptTemplate.from_messages(messages)
+    chat = ChatPerplexity(model="sonar-deep-research")
+    chain = prompt_template | chat
+    response = chain.invoke({"target_url": request_data.target_url})
     return response.content
 
 async def send_post_for_callback(llm_response_content: str, tid: str) -> dict:
@@ -108,6 +138,7 @@ def process_request(request_data: EchoRequest) -> dict:
     print("Starting process_request")
     # call new function to start LLM
 
+    # bpwf_id = 1 is for sonar-deep-research for triggers
     if (request_data.bpwf_id == "1"):
         asyncio.create_task(process_request_async_v1(request_data))
         return {"confirmed": request_data.wf_id}
