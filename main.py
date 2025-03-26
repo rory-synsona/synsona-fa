@@ -11,6 +11,9 @@ from langchain_community.chat_models import ChatPerplexity
 from langchain_core.prompts import ChatPromptTemplate
 import json
 
+# Import the mappings from mappings.py
+from mappings import BPSTEP_MAPPINGS
+
 # Load environment variables
 load_dotenv()
 
@@ -38,47 +41,90 @@ class PieRequest(BaseModel):
     def get_input_json_dict(self) -> dict:
         return json.loads(self.input_json)
 
-def run_openai(domain: str, tid: str, cid: str) -> dict:
-    model = init_chat_model("gpt-4o-mini", model_provider="openai")
+def run_bpstep_Angles1(request_data: PieRequest) -> dict:
+    input_json_dict = request_data.get_input_json_dict()
+    input_triggers = input_json_dict.get("input_triggers")
+    input_target_name = input_json_dict.get("input_target_name")
+
+    print("run_bpstep_Angles1: ", input_json_dict)
+    print("input_triggers: ", input_triggers)   
+    print("input_target_name: ", input_target_name)
+
     messages = [
-        SystemMessage("Translate the following from English into Italian"),
-        HumanMessage("hi!"),
+        ("system",
+         """ROLE: You are a Sales Development Representative for 'Phriendly Phishing'. Phriendly Phishing specializes in security awareness and phishing simulation training. The company offers tailored, automated training solutions that empower organizations to combat cyber threats, including phishing and ransomware. Their value proposition lies in delivering engaging, customizable learning experiences for each department that foster long-lasting behavioral change among employees, thereby reducing the risk of financial and reputational damage from cyber attacks. Phriendly Phishing's content is recognized for being localized and more relevant to Australian and New Zealand audiences, contributing to an increase in completion rates compared to other offerings.
+
+        TARGET PERSONA at {input_target_name}: Chief Information Security Officer (CISO) at {input_target_name}
+        1. Pain points:
+            - Increasing volume and sophistication of cyber threats
+            - Human error is a major cyber risk
+            - Regulatory compliance requirements (GDPR, HIPAA, SOC 2, ISO etc)
+            - Board pressure to reduce cyber risk while managing risk
+        2. Motivations:
+            - Reduce human risk as a cybersecurity vulnerability
+            - Ensure compliance with industry regulations
+            - Strengthen security culture across the organisation
+            - Demonstrate proactive security measures to leadership and auditors
+            - Could lose their job/reputation in the event of a major cyber breach
+            - Minimise business disruption from cyber incidents
+        
+        OBJECTIVE:
+        The user will provide you a list of TRIGGERS for {input_target_name}. You will generate an ANGLE that resonates with the TARGET PERSONA by connecting the TRIGGER to their persona's motivations and pain points in a way that offers value or a solution, and aligns with Phriendly Phishing's value proposition.
+       
+        OUTPUT TEMPLATE: Use this JSON template for each ANGLE you generate:
+
+        {{
+            "Angle for CISO": "Connect the TRIGGER to Phriendly Phishing's value proposition and how it addresses the CISO's pain points and motivations. Be concise, direct, clear, and avoid AI sounding words or terms.",
+            "Relevance to CISO": "Explain why this angle is relevant the CISO at {input_target_name}. What are they likely doing or thinking about in response to this TRIGGER?",
+            "Trigger": "Summary as provided exacgtly in TRIGGER",
+            "Risk": "Expand on the cyber security risk involved in the TRIGGER and what it means for {input_target_name}'s operational metrics, financials, reputation, and compliance",
+            "Reference": "TITLE and exact URL of the source for the TRIGGER"
+        }}
+
+        Your response must only include the JSON output: Exclude introduction and concluding summary."""),
+        ("human", "Triggers for {input_target_name}: {input_triggers}")
     ]
-    response = model.invoke(messages)
+    prompt_template = ChatPromptTemplate.from_messages(messages)
+    chat = init_chat_model("gpt-4o-mini", model_provider="openai")
+    chain = prompt_template | chat
+    response = chain.invoke({"input_target_name": input_target_name, "input_triggers": input_triggers})
     return response
 
-def run_bpwf_1(request_data: PieRequest) -> dict:
+def run_bpstep_Triggers(request_data: PieRequest) -> dict:
     input_json_dict = request_data.get_input_json_dict()
     target_url = input_json_dict.get("target_url")
-    print("run_bpwf_1: ", input_json_dict, " => ", target_url)
+    print("run_bpstep_Triggers: ", input_json_dict, " => ", target_url)
 
     messages = [("system", "You are a friendly assistant. What is the target URL?"), ("human", "Target url = {target_url}")]
 
-    # messages = [
+     # messages = [
     #     ("system",
     #      """ROLE: You are a research assistant for 'Phriendly Phishing' (https://www.phriendlyphishing.com). Phriendly Phishing specializes in security awareness and phishing simulation training. The company offers tailored, automated training solutions that empower organizations to combat cyber threats, including phishing and ransomware. Their value proposition lies in delivering engaging, customizable learning experiences for each department that foster long-lasting behavioral change among employees, thereby reducing the risk of financial and reputational damage from cyber attacks. Phriendly Phishing's content is recognized for being localized and more relevant to Australian and New Zealand audiences, contributing to an increase in completion rates compared to other offerings.
          
-    #     OBJECTIVE: The user will assign you a target account. You are to thoroughly research the company to find potential triggers for engagement related to topics that resonate with Phriendly Phishing
+    #     OBJECTIVE:
+    #     The user will assign you a target account. You are to thoroughly research the company to find relevant triggers that will lead to opportunities for engagement. Your research should focus on topics that resonate with Phriendly Phishing's value proposition.
         
     #     RELEVANT TOPICS for Phriendly Phishing:
     #     1. cyber breaches
-    #     2. cyber security
+    #     2. it security investments
     #     3. phishing attacks
     #     4. cyber attacks
     #     5. ransomware
     #     6. changes in security leadership (Chief Information Security Officer or CISO)'
 
     #     RESEARCH SOURCES: Your search about the target account MUST include the following sources
-    #     1. Recent news about the target account
-    #     2. Recent news about the target account's main competitors
-    #     3. Recent news about the target account's industry
-    #     4. Recent news about companies in Australia or New Zealand
-    #     5. Recent change to regulations like APRA, ISO Certifications, Australian/New Zealand Government guidelines around cyber breaches
-    #     5. Review their latest Directors' Report
-    #     6. Review their latest Annual Financial Report
-    #     7. Review their latest Half-Year Financial Report
+    #     1. News about the target account
+    #     2. News about the target account's top competitors
+    #     3. News about the target account's sub-industry 
+    #     4. News about companies in Australia or New Zealand
+    #     5. News about changes to regulations like APRA, ISO Certifications, Australian/New Zealand Government guidelines around cyber breaches
+    #     6. News about new regulations or guidelines around cyber security
+    #     7. Review their latest Directors' Report
+    #     8. Review their latest Annual Financial Report
+    #     9. Review their latest Half-Year Financial Report
         
-    #     OUTPUT TEMPLATE: Use this template for each trigger you find
+    #     OUTPUT TEMPLATE: Use this template for each trigger you find:
+    
     #     Title: Concise title of the trigger
     #     Date: Publish date
     #     Summary: Concise summary of the trigger with high brevity for a c-level executive, focusing on details (who/what/when/where/why/how), figures, metrics, monitory values, and percentages
@@ -109,22 +155,25 @@ async def send_post_callback_v1(response_content: str, i_tokens: int, o_tokens: 
         "i_tokens": i_tokens,
         "o_tokens": o_tokens,
         "o_r_tokens": o_r_tokens,
-        "input_json": request_data.input_json  # Ensure input_json is sent as a string
     }
     headers = {"Content-Type": "application/json"}
     
     async with httpx.AsyncClient() as client:
         response = await client.post(bubble_app_url, json=payload, headers=headers)
         response.raise_for_status()
-    return 0
+        print("Payload: ", payload)
+    return
 
 async def process_request_async_v1(request_data: PieRequest) -> dict:
     print("Starting process_request_async")
 
-    if request_data.bpwf_id == "1":
-        print("bpwf_id is 1 - Triggers")
+    # Use the mappings to determine the action based on bpstep_id
+    bpstep = BPSTEP_MAPPINGS.get(request_data.bpstep_id)
 
-        response = await asyncio.to_thread(run_bpwf_1, request_data)
+    if bpstep == "Triggers":
+        print("bpstep_id is Triggers - 1742963840776x872202725975654400")
+
+        response = await asyncio.to_thread(run_bpstep_Triggers, request_data)
 
         # Extract values from usage_metadata
         input_tokens = response.usage_metadata['input_tokens']
@@ -133,8 +182,17 @@ async def process_request_async_v1(request_data: PieRequest) -> dict:
 
         await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
 
-    if request_data.bpwf_id == "2":
-        print("bpwf_id is 2!")
+    elif bpstep == "Angles persona 1":
+        print("bpstep_id is Angles persona 1 - 1743007240371x889852377243582500")
+        response = await asyncio.to_thread(run_bpstep_Angles1, request_data)
+
+        # Extract values from usage_metadata
+        input_tokens = response.usage_metadata['input_tokens']
+        output_tokens = response.usage_metadata['output_tokens']
+        # output_reasoning_tokens = response.usage_metadata['output_reasoning_tokens']
+
+        await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
+
 
     return
 
@@ -153,7 +211,7 @@ async def pie_v1(request_data: PieRequest, http_request: Request):
     token = auth_header.split(" ")[1]
 
     if token == "syn-e5f3a7d6c9b4f2a1c9d9e7b6a3f1b2c4":
-        if request_data.bpwf_id:
+        if request_data.bpstep_id:
             response = process_request(request_data)
             return response
         else:
