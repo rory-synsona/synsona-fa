@@ -192,7 +192,8 @@ async def process_request_async_v1(request_data: PieRequest) -> dict:
         # output_reasoning_tokens = response.usage_metadata['output_reasoning_tokens']
 
         await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
-
+    else:
+        print("bpstep_id not found in mappings")
 
     return
 
