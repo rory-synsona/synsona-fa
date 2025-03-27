@@ -144,7 +144,7 @@ def run_bpstep_Triggers(request_data: PieRequest) -> dict:
     Relevance: Explain why this trigger is relevant to Phriendly Phishing
     Reference: Exact URL of the source of the trigger
         
-    Your response must only include the triggers. Exclude introduction and concluding summary."""),
+    Your response must only include the triggers in plain text. No markdown or JSON. Exclude introduction and concluding summary."""),
     ("human", "Target account to research: {target_url}")]
     prompt_template = ChatPromptTemplate.from_messages(messages)
     chat = ChatPerplexity(model="sonar-deep-research")
