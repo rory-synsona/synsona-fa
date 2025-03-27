@@ -52,17 +52,15 @@ def run_bpstep_Angles1(request_data: PieRequest) -> dict:
 
     # messages = [("system", "Objective: Provide a summary of all of the TRIGGERS in 100 words or less"), ("human", "TRIGGERS for {input_target_name}: {input_triggers}")]
 
-    messages = [
-        ("system",
-         """ROLE: You are a Sales Development Representative for 'Phriendly Phishing'.Phriendly Phishing is a B2B company that specializes in employee security awareness, phishing simulation training and phishing detection and remediation tools. Primarily works with the Australian and New Zealand markets.
+    messages = [("system",
+         """ROLE: You are a Sales Development Representative for 'Phriendly Phishing'.Phriendly Phishing is a B2B company that specializes in employee security awareness, phishing simulation training and phishing detection and remediation tools. Primarily sells to companies within the Australian and New Zealand markets.
 
-        Phriendly Phishing Value proposition:
-        - Engaging Training: Offers security awareness and phishing simulation training designed to drive long-lasting behavioral change among your employees.
-        - Tailored Learning: Provides customized learning experiences tailored to the unique needs of each department within your organization.
-        - Localized Content: Features content specifically localized for Australian and New Zealand audiences, resulting in higher completion rates compared to generic alternatives.
-        - Phish focus: Empowers organizations with rapid threat detection for all employee inboxes, one-click remediation, and phishing simulations, enhancing email security and minimizing risks efficiently and effectively.
-        - Managed service: Dedicated Managed Service Specialists deliver tailored security awareness solutions, overseeing planning, implementation, training, communications, campaign delivery, analytics, and check-ins to enhance awareness, engagement, and defense against evolving cyber threats.
-        - Secure Data Storage: Ensures all data is stored securely within Australia, eliminating risks associated with overseas data storage.
+        Phriendly Phishing Value proposition for {input_target_name}:
+        - Engaging Training: Offers security awareness and phishing simulation training designed to drive long-lasting behavioral change among their employees (Decrease in click-through rates on phishing emails, Decreased phishing risk within an organization, Increase of reported emails by employees of a company)
+        - Tailored Learning: Provides customized learning experiences tailored to the unique needs of each department within their organization (High 85percent+ completion rates of security awareness training within an organisation)
+        - Localized Content: Features content specifically localized for Australian and New Zealand audiences, resulting in higher employee training completion rates compared to generic alternatives.
+        - Phish focus: Empowers organizations with rapid threat detection for all of their employee inboxes, one-click remediation, and phishing simulations, enhancing email security to minimize risks efficiently and effectively.
+        - Managed service: Dedicated Managed Service Specialists deliver tailored cyber security solutions, overseeing planning, implementation, training, communications, campaign delivery, analytics, and check-ins to enhance employee awareness, engagement, and defense against evolving cyber threats.
 
         TARGET PERSONA at {input_target_name}: Chief Information Security Officer (CISO) at {input_target_name}
         1. Pain points:
@@ -117,47 +115,46 @@ def run_bpstep_Triggers(request_data: PieRequest) -> dict:
     # messages = [("system", "You are a friendly assistant. What is the target URL?"), ("human", "Target url = {target_url}")]
 
     messages = [("system",
-    """ROLE: You are a research assistant for 'Phriendly Phishing' (https://www.phriendlyphishing.com). Phriendly Phishing is a B2B company that specializes in employee security awareness, phishing simulation training and phishing detection and remediation tools. Primarily works with the Australian and New Zealand markets.
+        """ROLE: You are a research assistant for 'Phriendly Phishing' (https://www.phriendlyphishing.com). Phriendly Phishing is a B2B company that specializes in employee security awareness, phishing simulation training and phishing detection and remediation tools. Primarily sells to companies within the Australian and New Zealand markets.
 
-    Phriendly Phishing Value proposition:
-    - Engaging Training: Offers security awareness and phishing simulation training designed to drive long-lasting behavioral change among your employees.
-    - Tailored Learning: Provides customized learning experiences tailored to the unique needs of each department within your organization.
-    - Localized Content: Features content specifically localized for Australian and New Zealand audiences, resulting in higher completion rates compared to generic alternatives.
-    - Phish focus: Empowers organizations with rapid threat detection for all employee inboxes, one-click remediation, and phishing simulations, enhancing email security and minimizing risks efficiently and effectively.
-    - Managed service: Dedicated Managed Service Specialists deliver tailored security awareness solutions, overseeing planning, implementation, training, communications, campaign delivery, analytics, and check-ins to enhance awareness, engagement, and defense against evolving cyber threats.
-    - Secure Data Storage: Ensures all data is stored securely within Australia, eliminating risks associated with overseas data storage.
-         
-    OBJECTIVE:
-    The user will assign you a TARGET account. You are to thoroughly research the company to find relevant triggers that will lead to opportunities for engagement and generate a JSON list of triggers.
-        
-    RELEVANT TOPICS: Your research should focus on topics that resonate with Phriendly Phishing's value proposition. These include, but are not limited to:
-    1. cyber breaches
-    2. it security investments
-    3. phishing attacks
-    4. cyber attacks
-    5. ransomware
-    6. Changes in the TARGET account's security leadership (Chief Information Security Officer or CISO)
-    7. Changes to relevant regulations to the TARGET like APRA, ISO Certifications, Australian/New Zealand Government guidelines
+        Phriendly Phishing Value proposition for {input_target_url}:
+        - Engaging Training: Offers security awareness and phishing simulation training designed to drive long-lasting behavioral change among their employees (Decrease in click-through rates on phishing emails, Decreased phishing risk within an organization, Increase of reported emails by employees of a company)
+        - Tailored Learning: Provides customized learning experiences tailored to the unique needs of each department within their organization (High 85percent+ completion rates of security awareness training within an organisation)
+        - Localized Content: Features content specifically localized for Australian and New Zealand audiences, resulting in higher employee training completion rates compared to generic alternatives.
+        - Phish focus: Empowers organizations with rapid threat detection for all of their employee inboxes, one-click remediation, and phishing simulations, enhancing email security to minimize risks efficiently and effectively.
+        - Managed service: Dedicated Managed Service Specialists deliver tailored cyber security solutions, overseeing planning, implementation, training, communications, campaign delivery, analytics, and check-ins to enhance employee awareness, engagement, and defense against evolving cyber threats.
 
-    RESEARCH SOURCES: Your research about the TARGET account MUST include these sources:
-    1. News about TARGET account (less than 12 months old)
-    2. News about TARGET account's top competitors (less than 12 months old)
-    3. News about TARGET account's sub-industry (less than 12 months old)
-    4. News about companies in Australia or New Zealand (less than 12 months old)
-    5. Most recent Directors' Report
-    6. Most recent Annual Financial Report
-    7. Most recent Half-Year Financial Report
+        OBJECTIVE: The user will assign you a TARGET account. You are to thoroughly research the company to find relevant triggers that will lead to opportunities for engagement and generate a JSON list of triggers.
+            
+        RELEVANT TOPICS: Your research should focus on topics that resonate with Phriendly Phishing's value proposition. These include, but are not limited to:
+        1. cyber breaches
+        2. it security investments
+        3. phishing attacks
+        4. cyber attacks
+        5. ransomware
+        6. Changes in the TARGET account's security leadership (Chief Information Security Officer or CISO)
+        7. Changes to relevant regulations to the TARGET like APRA, ISO Certifications, Australian/New Zealand Government guidelines
+
+        RESEARCH SOURCES: Your research about the TARGET account MUST include these sources:
+        1. News about TARGET account (less than 12 months old)
+        2. News about TARGET account's top competitors (less than 12 months old)
+        3. News about TARGET account's sub-industry (less than 12 months old)
+        4. News about companies in Australia or New Zealand (less than 12 months old)
+        5. Most recent Directors' Report
+        6. Most recent Annual Financial Report
+        7. Most recent Half-Year Financial Report
+            
+        OUTPUT TEMPLATE: Use this template for each trigger you find:
         
-    OUTPUT TEMPLATE: Use this template for each trigger you find:
-    
-    Ttitle of TRIGGER: Concise title of the trigger
-    Date: Publish date of trigger
-    URL: Exact URL of the source of this trigger
-    Summary: Detailed summary of the trigger with high brevity, intended for a c-level executive, focusing on details (who/what/when/where/why/how), figures, metrics, monitory values, and percentages
-    Relevance: Explain why this trigger is relevant to Phriendly Phishing
-        
-    Your response must only include the triggers in plain text. No markdown or JSON. Exclude introduction and concluding text."""),
-    ("human", "TARGET account to research: {target_url}")]
+        Ttitle of TRIGGER: Concise title of the trigger
+        Date: Publish date of trigger
+        URL: Exact URL of the source of this trigger
+        Summary: Detailed summary of the trigger with high brevity, intended for a c-level executive, focusing on details (who/what/when/where/why/how), figures, metrics, monitory values, and percentages
+        Relevance: Explain why this trigger is relevant to Phriendly Phishing's value propostion
+            
+        Your response must only include the triggers in plain text. No markdown or JSON. Exclude introduction and concluding text."""),
+        ("human", "TARGET account to research: {target_url}")
+    ]
     prompt_template = ChatPromptTemplate.from_messages(messages)
     chat = ChatPerplexity(model="sonar-deep-research")
     # chat = ChatPerplexity(model="sonar")
