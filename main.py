@@ -61,7 +61,7 @@ def run_bpstep_Angles1(request_data: PieRequest) -> dict:
         - Tailored Learning: Provides customized learning experiences tailored to the unique needs of each department within your organization.
         - Localized Content: Features content specifically localized for Australian and New Zealand audiences, resulting in higher completion rates compared to generic alternatives.
         - Secure Data Storage: Ensures all data is stored securely within Australia, eliminating risks associated with overseas storage.
-        - Proactive Tools: Email integration with comprehensive threat analysis and built-in automations to help detect and remediate real phishing threats, and can easily turn a phishing threat in to a safe simulated phishing campaign for the employees.
+        - Proactive Tools: Email integration with comprehensive threat analysis and built-in automations to help detect and remediate real phishing threats, and can easily turn a phishing threat in to a safe simulated phishing campaign for employees.
 
         TARGET PERSONA at {input_target_name}: Chief Information Security Officer (CISO) at {input_target_name}
         1. Pain points:
@@ -120,7 +120,7 @@ def run_bpstep_Triggers(request_data: PieRequest) -> dict:
     - Tailored Learning: Provides customized learning experiences tailored to the unique needs of each department within your organization.
     - Localized Content: Features content specifically localized for Australian and New Zealand audiences, resulting in higher completion rates compared to generic alternatives.
     - Secure Data Storage: Ensures all data is stored securely within Australia, eliminating risks associated with overseas storage.
-    - Proactive Tools: Email integration with comprehensive threat analysis and built-in automations to help detect and remediate real phishing threats, and can easily turn a phishing threat in to a safe simulated phishing campaign for the employees.
+    - Proactive Tools: Email integration with comprehensive threat analysis and built-in automations to help detect and remediate real phishing threats, and can easily turn a phishing threat in to a safe simulated phishing campaign for employees.
          
     OBJECTIVE:
     The user will assign you a TARGET account. You are to thoroughly research the company to find relevant triggers that will lead to opportunities for engagement and generate a JSON list of triggers.
@@ -149,15 +149,22 @@ def run_bpstep_Triggers(request_data: PieRequest) -> dict:
     Date: Publish date of trigger
     Summary: Detailed summary of the trigger with high brevity, intended for a c-level executive, focusing on details (who/what/when/where/why/how), figures, metrics, monitory values, and percentages
     Relevance: Explain why this trigger is relevant to Phriendly Phishing
-    Reference: Exact URL of the source of the trigger
+    URL: Exact URL of the source of this trigger (must be verified)
         
-    Your response must only include the triggers in plain text. No markdown or JSON. Exclude introduction and concluding summary."""),
+    Your response must only include the triggers in plain text. No markdown or JSON. Exclude introduction and concluding text, exclude references section at bottom."""),
     ("human", "TARGET account to research: {target_url}")]
     prompt_template = ChatPromptTemplate.from_messages(messages)
     chat = ChatPerplexity(model="sonar-deep-research")
     # chat = ChatPerplexity(model="sonar")
     chain = prompt_template | chat
-    response = chain.invoke({"target_url": target_url})
+    response = chain.invoke(
+        {"target_url": target_url},
+        config={
+            "web_search_options": {
+                "search_context_size": "high"
+            }
+        }
+    )
     return response
 
 async def send_post_callback_v1(response_content: str, i_tokens: int, o_tokens: int, o_r_tokens: int, request_data: PieRequest) -> dict:
