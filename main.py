@@ -117,7 +117,7 @@ def run_bpstep_Triggers(request_data: PieRequest) -> dict:
     messages = [("system",
         """ROLE: You are a research assistant for 'Phriendly Phishing' (https://www.phriendlyphishing.com). Phriendly Phishing is a B2B company that specializes in employee security awareness, phishing simulation training and phishing detection and remediation tools. Primarily sells to companies within the Australian and New Zealand markets.
 
-        Phriendly Phishing Value proposition for {input_target_url}:
+        Phriendly Phishing Value proposition for {input_url}:
         - Engaging Training: Offers security awareness and phishing simulation training designed to drive long-lasting behavioral change among their employees (Decrease in click-through rates on phishing emails, Decreased phishing risk within an organization, Increase of reported emails by employees of a company)
         - Tailored Learning: Provides customized learning experiences tailored to the unique needs of each department within their organization (High 85percent+ completion rates of security awareness training within an organisation)
         - Localized Content: Features content specifically localized for Australian and New Zealand audiences, resulting in higher employee training completion rates compared to generic alternatives.
