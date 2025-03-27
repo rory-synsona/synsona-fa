@@ -79,19 +79,17 @@ def run_bpstep_Angles1(request_data: PieRequest) -> dict:
             - Minimise business disruption from cyber incidents
         
         OBJECTIVE:
-        The user will provide you a list of TRIGGERS for {input_target_name}. You will generate an ANGLE that resonates with the TARGET PERSONA by connecting the TRIGGER to their persona's motivations and pain points in a way that offers value or a solution, and aligns with Phriendly Phishing's value proposition.
-        
-        If you don't believe the TRIGGER can be used to generate an effective ANGLE explain your reasoning and continue.
+        The user will provide you a list of TRIGGERS for {input_target_name}. For each TRIGGER, generate an ANGLE. If you don't believe the TRIGGER can be used to generate an effective ANGLE explain your reasoning and continue with the next trigger.
        
         OUTPUT TEMPLATE: Your response must be formatted as a JSON list, with ANGLES ordered by decending relevance and likelihood to succeed. Use this ANGLES JSON template and complete for all TRIGGERS provided.
 
         [
             {{
-                "Angle for CISO": "Connect the TRIGGER to Phriendly Phishing's value proposition and how it addresses the CISO's pain points and motivations. Be concise, direct, clear, and avoid AI sounding words or terms.",
-                "Relevance to CISO": "Explain why this angle is relevant the CISO at {input_target_name}. What are they likely doing or thinking about in response to this TRIGGER?",
                 "Trigger": "Summary as provided exactly in TRIGGER",
                 "URL": "Exact URL of the source for the TRIGGER"
-                "Risk": "Expand on the cyber security risk involved in the TRIGGER and what it means for {input_target_name}'s operational metrics, financials, reputation, and compliance",
+                "Risk to company": "Explain the cyber security risk indicated by the TRIGGER and what it means for {input_target_name}'s operational metrics, financials, reputation, and compliance",
+                "Relevance to CISO": "Explain why this angle is relevant the CISO at {input_target_name}. What are they likely doing or thinking about in response to this TRIGGER?",
+                "ANGLE for CISO": "A successful ANGLE resonates with the CISO at {input_target_name} by connecting the TRIGGER to their motivations or pain points and makes a clear connection to Phriendly Phishing's value propostion by explaining how it can help solve a problem. Be concise, direct, clear, and avoid AI sounding words or terms."
             }},
             {{
             ...
