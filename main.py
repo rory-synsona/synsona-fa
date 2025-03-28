@@ -36,13 +36,10 @@ class PieRequest(BaseModel):
     bpstep_id: str
     wf_id: str
     step_id: str
-    input_json: str
-
-    def get_input_json_dict(self) -> dict:
-        return json.loads(self.input_json)
+    input_json: dict
 
 def run_bpstep_Angles1(request_data: PieRequest) -> dict:
-    input_json_dict = request_data.get_input_json_dict()
+    input_json_dict = request_data.input_json
     input_triggers = input_json_dict.get("triggers")
     input_target_company = input_json_dict.get("target_company")
 
@@ -108,7 +105,7 @@ def run_bpstep_Angles1(request_data: PieRequest) -> dict:
     return response
 
 def run_bpstep_Triggers(request_data: PieRequest) -> dict:
-    input_json_dict = request_data.get_input_json_dict()
+    input_json_dict = request_data.input_json
     input_target_url = input_json_dict.get("target_url")
     print("run_bpstep_Triggers: ", input_json_dict, " => ", input_target_url)
 
@@ -124,7 +121,7 @@ def run_bpstep_Triggers(request_data: PieRequest) -> dict:
         - Phish focus: Empowers organizations with rapid threat detection for all of their employee inboxes, one-click remediation, and phishing simulations, enhancing email security to minimize risks efficiently and effectively.
         - Managed service: Dedicated Managed Service Specialists deliver tailored cyber security solutions, overseeing planning, implementation, training, communications, campaign delivery, analytics, and check-ins to enhance employee awareness, engagement, and defense against evolving cyber threats.
 
-        OBJECTIVE: The user will assign you a TARGET account. You are to thoroughly research the company to find relevant triggers that will lead to opportunities for engagement and generate a JSON list of triggers.
+        OBJECTIVE: The user will assign you a TARGET account. You are to thoroughly research the company to find RECENT and RELEVANT triggers that will lead to opportunities for engagement and generate a JSON list of triggers.
             
         RELEVANT TOPICS: Your research should focus on topics that resonate with Phriendly Phishing's value proposition. These include, but are not limited to:
         1. cyber breaches
@@ -146,13 +143,13 @@ def run_bpstep_Triggers(request_data: PieRequest) -> dict:
             
         OUTPUT TEMPLATE: Use this template for each trigger you find:
         
-        Ttitle of TRIGGER: Concise title of the trigger
+        Title of TRIGGER: Concise title of the trigger
         Date: Publish date of trigger
         URL: Exact URL of the source of this trigger
         Summary: Detailed summary of the trigger with high brevity, intended for a c-level executive, focusing on details (who/what/when/where/why/how), figures, metrics, monitory values, and percentages
         Relevance: Explain why this trigger is relevant to Phriendly Phishing's value propostion
             
-        Your response must only include the triggers in plain text. No markdown or JSON. Exclude introduction and concluding text."""),
+        Your response must only include the triggers in plain text. No markdown and No JSON. Exclude introduction and concluding text."""),
         ("human", "TARGET account to research: {input_target_url}")
     ]
     prompt_template = ChatPromptTemplate.from_messages(messages)
