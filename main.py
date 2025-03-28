@@ -74,19 +74,23 @@ def run_bpstep_Angles1(request_data: PieRequest) -> dict:
             - Minimise business disruption from cyber incidents
         
         OBJECTIVE:
-        The user will provide you a list of TRIGGERS for {input_target_company}. For each TRIGGER, generate an ANGLE. If you don't believe the TRIGGER can be used to generate an effective ANGLE explain your reasoning and continue with the next trigger.
+        The user will provide you a list of TRIGGERS for {input_target_company}. For each TRIGGER, generate an ANGLE. 
+        
+        Generating an ANGLE: Your ANGLE must resonate with the CISO at {input_target_company} by connecting the TRIGGER to their persona's motivations or pain points and then makes a clear connection to Phriendly Phishing's value propostion. Explicitly mention the trigger and be very specific when referring to it. Be concise, direct, clear, and avoid AI sounding words or terms.
+
+        If you don't believe the TRIGGER can be used to generate an effective ANGLE explain your reasoning and continue with the next trigger.
 
         Your response must be SORTED by decending relevance and likelihood to succeed (1 being the lowest and 5 being the highest).
        
-        OUTPUT TEMPLATE:  Use this template and complete for all TRIGGERS provided.
+        OUTPUT TEMPLATE: Use this template and complete for all TRIGGERS provided.
 
-        "ANGLE for CISO": "A successful ANGLE resonates with the CISO at {input_target_company} by connecting the TRIGGER to their motivations or pain points and makes a clear connection to Phriendly Phishing's value propostion by explaining how it can help solve a problem. Be concise, direct, clear, and avoid AI sounding words or terms.",
-        "Score of ANGLE": "Rate the ANGLE from 1-5 based on relevance and likelihood to succeed. 1 being the lowest and 5 being the highest.",
-        "Trigger": "Summary as provided exactly in TRIGGER",
-        "URL": "Exact URL of the source for the TRIGGER",
+        "Trigger": "Summary of original TRIGGER summary",
+        "URL": "Exact URL source for the TRIGGER",
         "Risk to company": "Explain the cyber security risk indicated by the TRIGGER and what it means for {input_target_company}'s operational metrics, financials, reputation, and compliance",
         "Relevance to CISO": "Explain why this angle is relevant the CISO at {input_target_company}. What are they likely doing or thinking about in response to this TRIGGER?"
-
+        "ANGLE for CISO": "Your ANGLE for the CISO at {input_target_company}",
+        "Score of ANGLE": "Rate the ANGLE from 1-5 (briefly explain your reasoning)",
+        
         Your response must only include the triggers in plain text. No markdown and No JSON. Exclude introduction and concluding text."""),
         ("human", "TRIGGERS for {input_target_company}: {input_triggers}")
     ]
