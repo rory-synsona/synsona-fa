@@ -44,25 +44,25 @@ class PieRequest(BaseModel):
 def run_bpstep_Angles1(request_data: PieRequest) -> dict:
     input_json_dict = request_data.get_input_json_dict()
     input_triggers = input_json_dict.get("input_triggers")
-    input_target_name = input_json_dict.get("input_target_name")
+    input_target_company = input_json_dict.get("input_target_company")
 
     print("run_bpstep_Angles1: ", input_json_dict)
     print("input_triggers: ", input_triggers)   
-    print("input_target_name: ", input_target_name)
+    print("input_target_company: ", input_target_company)
 
-    # messages = [("system", "Objective: Provide a summary of all of the TRIGGERS in 100 words or less"), ("human", "TRIGGERS for {input_target_name}: {input_triggers}")]
+    # messages = [("system", "Objective: Provide a summary of all of the TRIGGERS in 100 words or less"), ("human", "TRIGGERS for {input_target_company}: {input_triggers}")]
 
     messages = [("system",
-         """ROLE: You are a Sales Development Representative for 'Phriendly Phishing'.Phriendly Phishing is a B2B company that specializes in employee security awareness, phishing simulation training and phishing detection and remediation tools. Primarily sells to companies within the Australian and New Zealand markets.
+         """ROLE: You are a Sales Development Representative for 'Phriendly Phishing'. Phriendly Phishing is a B2B company that specializes in employee security awareness, phishing simulation training and phishing detection and remediation tools. Primarily sells to companies within the Australian and New Zealand markets.
 
-        Phriendly Phishing Value proposition for {input_target_name}:
+        Phriendly Phishing Value proposition for {input_target_company}:
         - Engaging Training: Offers security awareness and phishing simulation training designed to drive long-lasting behavioral change among their employees (Decrease in click-through rates on phishing emails, Decreased phishing risk within an organization, Increase of reported emails by employees of a company)
         - Tailored Learning: Provides customized learning experiences tailored to the unique needs of each department within their organization (High 85percent+ completion rates of security awareness training within an organisation)
         - Localized Content: Features content specifically localized for Australian and New Zealand audiences, resulting in higher employee training completion rates compared to generic alternatives.
         - Phish focus: Empowers organizations with rapid threat detection for all of their employee inboxes, one-click remediation, and phishing simulations, enhancing email security to minimize risks efficiently and effectively.
         - Managed service: Dedicated Managed Service Specialists deliver tailored cyber security solutions, overseeing planning, implementation, training, communications, campaign delivery, analytics, and check-ins to enhance employee awareness, engagement, and defense against evolving cyber threats.
 
-        TARGET PERSONA at {input_target_name}: Chief Information Security Officer (CISO) at {input_target_name}
+        TARGET PERSONA at {input_target_company}: Chief Information Security Officer (CISO) at {input_target_company}
         1. Pain points:
             - Increasing volume and sophistication of cyber threats
             - Human error is a major cyber risk
@@ -77,7 +77,7 @@ def run_bpstep_Angles1(request_data: PieRequest) -> dict:
             - Minimise business disruption from cyber incidents
         
         OBJECTIVE:
-        The user will provide you a list of TRIGGERS for {input_target_name}. For each TRIGGER, generate an ANGLE. If you don't believe the TRIGGER can be used to generate an effective ANGLE explain your reasoning and continue with the next trigger.
+        The user will provide you a list of TRIGGERS for {input_target_company}. For each TRIGGER, generate an ANGLE. If you don't believe the TRIGGER can be used to generate an effective ANGLE explain your reasoning and continue with the next trigger.
 
         Your response must be formatted as a JSON list of ANGLES SORTED by decending relevance and likelihood to succeed with 1 being the lowest and 5 being the highest.
        
@@ -85,12 +85,12 @@ def run_bpstep_Angles1(request_data: PieRequest) -> dict:
 
         [
             {{
-                "ANGLE for CISO": "A successful ANGLE resonates with the CISO at {input_target_name} by connecting the TRIGGER to their motivations or pain points and makes a clear connection to Phriendly Phishing's value propostion by explaining how it can help solve a problem. Be concise, direct, clear, and avoid AI sounding words or terms.",
+                "ANGLE for CISO": "A successful ANGLE resonates with the CISO at {input_target_company} by connecting the TRIGGER to their motivations or pain points and makes a clear connection to Phriendly Phishing's value propostion by explaining how it can help solve a problem. Be concise, direct, clear, and avoid AI sounding words or terms.",
                 "Score of ANGLE": "Rate the ANGLE from 1-5 based on relevance and likelihood to succeed. 1 being the lowest and 5 being the highest.",
                 "Trigger": "Summary as provided exactly in TRIGGER",
                 "URL": "Exact URL of the source for the TRIGGER",
-                "Risk to company": "Explain the cyber security risk indicated by the TRIGGER and what it means for {input_target_name}'s operational metrics, financials, reputation, and compliance",
-                "Relevance to CISO": "Explain why this angle is relevant the CISO at {input_target_name}. What are they likely doing or thinking about in response to this TRIGGER?"
+                "Risk to company": "Explain the cyber security risk indicated by the TRIGGER and what it means for {input_target_company}'s operational metrics, financials, reputation, and compliance",
+                "Relevance to CISO": "Explain why this angle is relevant the CISO at {input_target_company}. What are they likely doing or thinking about in response to this TRIGGER?"
             }},
             {{
             ...
@@ -98,26 +98,26 @@ def run_bpstep_Angles1(request_data: PieRequest) -> dict:
         ]
 
         Your response must only include the JSON: Exclude introduction and concluding summary."""),
-        ("human", "TRIGGERS for {input_target_name}: {input_triggers}")
+        ("human", "TRIGGERS for {input_target_company}: {input_triggers}")
     ]
     prompt_template = ChatPromptTemplate.from_messages(messages)
     # chat = init_chat_model("gpt-4o-mini", model_provider="openai")
     chat = init_chat_model("o3-mini", model_provider="openai")
     chain = prompt_template | chat
-    response = chain.invoke({"input_target_name": input_target_name, "input_triggers": input_triggers})
+    response = chain.invoke({"input_target_company": input_target_company, "input_triggers": input_triggers})
     return response
 
 def run_bpstep_Triggers(request_data: PieRequest) -> dict:
     input_json_dict = request_data.get_input_json_dict()
-    target_url = input_json_dict.get("target_url")
-    print("run_bpstep_Triggers: ", input_json_dict, " => ", target_url)
+    input_target_url = input_json_dict.get("input_target_url")
+    print("run_bpstep_Triggers: ", input_json_dict, " => ", input_target_url)
 
-    # messages = [("system", "You are a friendly assistant. What is the target URL?"), ("human", "Target url = {target_url}")]
+    # messages = [("system", "You are a friendly assistant. What is the target URL?"), ("human", "Target url = {input_target_url}")]
 
     messages = [("system",
         """ROLE: You are a research assistant for 'Phriendly Phishing' (https://www.phriendlyphishing.com). Phriendly Phishing is a B2B company that specializes in employee security awareness, phishing simulation training and phishing detection and remediation tools. Primarily sells to companies within the Australian and New Zealand markets.
 
-        Phriendly Phishing Value proposition for {input_url}:
+        Phriendly Phishing Value proposition for {input_target_url}:
         - Engaging Training: Offers security awareness and phishing simulation training designed to drive long-lasting behavioral change among their employees (Decrease in click-through rates on phishing emails, Decreased phishing risk within an organization, Increase of reported emails by employees of a company)
         - Tailored Learning: Provides customized learning experiences tailored to the unique needs of each department within their organization (High 85percent+ completion rates of security awareness training within an organisation)
         - Localized Content: Features content specifically localized for Australian and New Zealand audiences, resulting in higher employee training completion rates compared to generic alternatives.
@@ -153,14 +153,14 @@ def run_bpstep_Triggers(request_data: PieRequest) -> dict:
         Relevance: Explain why this trigger is relevant to Phriendly Phishing's value propostion
             
         Your response must only include the triggers in plain text. No markdown or JSON. Exclude introduction and concluding text."""),
-        ("human", "TARGET account to research: {target_url}")
+        ("human", "TARGET account to research: {input_target_url}")
     ]
     prompt_template = ChatPromptTemplate.from_messages(messages)
     chat = ChatPerplexity(model="sonar-deep-research")
     # chat = ChatPerplexity(model="sonar")
     chain = prompt_template | chat
     response = chain.invoke(
-        {"target_url": target_url},
+        {"input_target_url": input_target_url},
         config={
             "web_search_options": {
                 "search_context_size": "high"
