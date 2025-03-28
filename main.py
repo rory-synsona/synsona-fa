@@ -43,8 +43,8 @@ class PieRequest(BaseModel):
 
 def run_bpstep_Angles1(request_data: PieRequest) -> dict:
     input_json_dict = request_data.get_input_json_dict()
-    input_triggers = input_json_dict.get("input_triggers")
-    input_target_company = input_json_dict.get("input_target_company")
+    input_triggers = input_json_dict.get("triggers")
+    input_target_company = input_json_dict.get("target_company")
 
     print("run_bpstep_Angles1: ", input_json_dict)
     print("input_triggers: ", input_triggers)   
@@ -109,7 +109,7 @@ def run_bpstep_Angles1(request_data: PieRequest) -> dict:
 
 def run_bpstep_Triggers(request_data: PieRequest) -> dict:
     input_json_dict = request_data.get_input_json_dict()
-    input_target_url = input_json_dict.get("input_target_url")
+    input_target_url = input_json_dict.get("target_url")
     print("run_bpstep_Triggers: ", input_json_dict, " => ", input_target_url)
 
     # messages = [("system", "You are a friendly assistant. What is the target URL?"), ("human", "Target url = {input_target_url}")]
