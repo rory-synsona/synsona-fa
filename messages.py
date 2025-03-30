@@ -198,8 +198,9 @@ TRIGGERS_PERSONA_MESSAGES = [
         - Demonstrate proactive security measures to leadership and auditors
         - Could lose their job/reputation in the event of a major cyber breach
         - Minimise business disruption from cyber incidents
-
-    OBJECTIVE: Thoroughly research the target account {input_target_url} to identify the 5 most RECENT + RELEVANT triggers for the CISO that will lead to a business opportunity for Phriendly Phishing.
+    """),
+    ("human",
+     """OBJECTIVE: Thoroughly research the target account {input_target_url} to identify the 5 most RECENT + RELEVANT triggers for the CISO that will lead to a business opportunity for Phriendly Phishing.
 
     STEPS: Search for news in the following order:
     1. News about {input_target_url} (Since November 2024)
@@ -210,19 +211,17 @@ TRIGGERS_PERSONA_MESSAGES = [
     6. {input_target_url} 2024 Annual Financial Report
     7. {input_target_url} Most recent Half-Year Financial Report
 
-    RELEVANT TOPICS: Your research should focus on topics that resonate with Phriendly Phishing's value proposition. These include, but are not limited to:
-    1. cyber breaches, cyber attacks
-    2. phishing emails, phishing attacks
-    3. ransomware, virus, malware
-    4. new investments in IT security
-    5. increase in headcount (hiring, acquisitions, mergers)
-    6. Changes in {input_target_url}'s security leadership (Chief Information Security Officer or CISO)
-    7. Changes to regulations that affect {input_target_url} (i.e. APRA, ISO Certifications, Australian/New Zealand Government guidelines)
+    TRIGGER TOPICS -> IDEAS of how it can be leveraged to create a business opportunity
+    1. cyber breaches, cyber attacks, phishing emails, ransomware, virus, malware -> Use this trigger to create fear that their organization is next
+    4. new investments in IT security -> Can be an indicator that they are investing in security. and may be in the market for phishing training
+    5. Increase in headcount (hiring, acquisitions, mergers) -> Can be used to create fear that people are more likely to make a mistake during periods of large organizational changes
+    6. Changes in {input_target_url}'s security leadership (Chief Information Security Officer or CISO) -> Can indicate that the new leadership ould be open to new ideas in an effort to make their mark on the company's strategy
+    7. Changes to regulations that affect {input_target_url} (i.e. APRA, ISO Certifications, Australian/New Zealand Government guidelines) -> Can be used as trigger to engage and reiterate the importance of keeping their organization protected through training
 
     OUTPUT REQUIREMENTS:
-    - Your response must be formatted as list of triggers (JSON list).
     - Your response must be detailed and high brevity, intended for a c-level executive with limited time, figures, metrics, monetary values, changes, and percentages.
-    - Your response must only include the triggers in plain text. No markdown and No JSON. Exclude introduction and concluding text.
+    - Your response must only include the triggers in plain text. No markdown and No JSON.
+    - Exclude introduction and conclusion text: Only respond with the list.
 
     OUTPUT TEMPLATE: For each trigger, use this template:
 
@@ -230,12 +229,11 @@ TRIGGERS_PERSONA_MESSAGES = [
     Date: Publish date of trigger
     URL: Exact URL of the source of this trigger in-line
     Summary:
-    - Description of the trigger in bullet points
+    - Description of the trigger in bullet points.
     Risk identified:
     - Describe the cyber security risk indicated by the TRIGGER using bullet points
     - Imagine example of how this trigger could negatively impact {input_target_url}'s bottom-line (finances), reputation, and compliance
     Relevance for CISO:
     - Explain how Phriendly Phishing can help the CISO at {input_target_url} based on their pain points and motivations.
-    
-    List of Triggers:""")
+    """)
 ]
