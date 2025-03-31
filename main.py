@@ -15,7 +15,7 @@ import json
 from mappings import BPSTEP_MAPPINGS
 
 # Import messages from external file
-from messages import ANGLES1_MESSAGES, TRIGGERS_MESSAGES, TRIGGERS_PERSONA_MESSAGES
+from messages import ANGLES1_MESSAGES, TRIGGER_ANGLES_PERSONA_1_MESSAGES
 
 # Load environment variables
 load_dotenv()
@@ -69,7 +69,7 @@ def run_bpstep_Triggers(request_data: PieRequest) -> dict:
 
     chat = ChatPerplexity(model="sonar-deep-research")
     # chat = ChatPerplexity(model="sonar")
-    messages = TRIGGERS_PERSONA_MESSAGES
+    messages = TRIGGER_ANGLES_PERSONA_1_MESSAGES
     prompt_template = ChatPromptTemplate.from_messages(messages)
     chain = prompt_template | chat
     response = chain.invoke(

@@ -290,6 +290,6 @@ TRIGGER_ANGLES_PERSONA_1_MESSAGES = [
     Details: 3-5 bullet point summary of trigger
     Risk: 3-5 bullet points: Describe the cyber security risk introduced by the TRIGGER. How could it impact {input_target_url}'s operational metrics, finances, reputation, or compliance standing?",
     CISO implications: Explain how this risk affects the CISO at {input_target_url}
-    Angle: Explain how Phriendly Phishing's phishing training can support the CISO and mitigate/reduce the risk introduced by this trigger
+    Angle: Connect all of the dots: Explain why Phriendly Phishing's phishing training can support the CISO and mitigate/reduce the risk introduced by this trigger
     """)
 ]
