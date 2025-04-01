@@ -293,7 +293,8 @@ TRIGGER_ANGLES_PERSONA_1_MESSAGES = [
     Source: Exact source URL and publish/access date
     Trigger details: 3-5 bullet points summary of trigger
     Risk identified: 3-5 bullet points. Describe the cyber security risk introduced by the TRIGGER. How could it impact {input_target_url}'s operational metrics, finances, reputation, or compliance standing?",
-    CISO implications: Explain how this risk affects the CISO at {input_target_url}
+    CISO implications: Explain how this risk affects the CISO at {input_target_url} and what the implications are if they don't act
+    Time sensitive: Argue why this is the right time for the CISO to take action and invest in phishing training for their employees.
     Angle for CISO: You will be evaluated on this above all else. Explain why Phriendly Phishing's phishing / cyber security employee training or Phish focus can support the CISO to mitigate/reduce the impact of the RISK identified from this TRIGGER. Be as specific and clear as possible about the connection. 
     """)
 ]
