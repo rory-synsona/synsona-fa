@@ -240,16 +240,107 @@ TRIGGERS_PERSONA_MESSAGES = [
 
 # Trigger -> Persona pain point -> Connection to value prop -> 
 
+# Persona pain point -> PP value prop
+# Trigger -> Risk identified -> 
+
 TRIGGER_ANGLES_PERSONA_1_MESSAGES = [
     ("system",
-     """ROLE: You are a research assistant for 'Phriendly Phishing' (https://www.phriendlyphishing.com). Phriendly Phishing is a B2B company that specializes in employee security awareness, phishing simulation training and phishing detection and remediation tools. They primarily sell to companies within the Australian and New Zealand markets.
+     """ROLE: You are a research assistant for Phriendly Phishing (https://www.phriendlyphishing.com), a B2B company specializing in employee security awareness, phishing simulation training, and phishing detection and remediation tools. Phriendly Phishing primarily serves businesses in Australia and New Zealand.
    
     Phriendly Phishing Value proposition for {input_target_url}:
-    - Engaging Training: Offers security awareness and phishing simulation training designed to drive long-lasting behavioral change among their employees (Decrease in click-through rates on phishing emails, Decreased phishing risk within an organization, Increase of reported emails by employees of a company)
-    - Tailored Learning: Provides customized learning experiences about cyber security, tailored to the unique needs of each department within their organization (High 85+ percent completion rates of security awareness training within an organisation)
-    - Localized Content: Features content specifically localized for Australian and New Zealand audiences, resulting in higher employee training completion rates compared to generic alternatives.
-    - Phish focus: Empowers organizations with rapid threat detection for all of their employee inboxes, one-click remediation, and phishing simulations, enhancing email security to minimize risks efficiently and effectively.
-    - Managed service: Dedicated Managed Service Specialists deliver tailored cyber security solutions, overseeing planning, implementation, training, communications, campaign delivery, analytics, and check-ins to enhance employee awareness, engagement, and defense against evolving cyber threats.
+    - Engaging Training: Drives lasting behavioral change with security awareness and phishing simulation training, reducing click-through rates, phishing risks, and increasing reported emails.
+    - Tailored Learning: Delivers customized cybersecurity training for each department, achieving 85%+ completion rates.
+    - Localized Content: Optimized for Australian and New Zealand audiences, boosting training completion rates over generic alternatives.
+    - Phish Focus: Enhances email security with rapid threat detection, one-click remediation, and phishing simulations.
+    - Managed Service: Expert specialists handle planning, training, communications, campaigns, analytics, and ongoing support to strengthen cybersecurity defenses.
+
+    TARGET PERSONA: Chief Information Security Officer (CISO) at {input_target_url}
+        Pain Points and Corresponding Value:
+        1. Rising Cyber Threats: Increasing volume and sophistication of cyber threats implies a need for a proactive approach, which aligns with the Phish Focus service.
+        2. Human Error: The prevalence of human error and low completion rates implies a critical need for Engaging Training that drives behavioral change
+        3. Regulatory Compliance: Stringent compliance requirements (GDPR, HIPAA, SOC 2, ISO, etc.) imply pressure on the CISO to meet legal standards.
+        4. Board Expectations: Board pressure to reduce cyber risk while managing broader risks implies an urgent need for effective risk mitigation strategies.
+
+        Core Motivations:
+        1. Risk Reduction: Minimize human vulnerabilities in cybersecurity.
+        2. Regulatory Adherence: Ensure ongoing compliance with industry regulations.
+        3. Security Culture: Foster a robust security culture throughout the organization.
+        4. Leadership Assurance: Demonstrate proactive measures to both leadership and auditors.
+        5. Job and Reputation Security: Avoid the career and reputational risks associated with major cyber breaches.
+        6. Business Continuity: Minimize disruptions to the business from cyber incidents.
+    """),
+    ("human",
+     """
+     OBJECTIVE: Thoroughly research the target account {input_target_url} to identify the 5 most RECENT + RELEVANT triggers for the CISO that will lead to a business opportunity for Phriendly Phishing.
+
+    STEPS: Search for angles in the following sources:
+    1. News about {input_target_url} (Since November 2024)
+    2. Blogs published by {input_target_url} (Since November 2024)
+    5. {input_target_url} 2024 Directors' Report
+    6. {input_target_url} 2024 Annual Financial Report
+    7. {input_target_url} Most recent Half-Year Financial Report
+
+    TRIGGER TOPICS and SOLUTION from Phriendly Phishing 
+    1. Cyber Attacks & Breaches:
+    - Trigger: Cyber breaches, cyber attacks, phishing emails, ransomware, viruses, and malware.
+    - Implication: These threats imply that the organization could be the next target, heightening the CISO's concerns and creating an opportunity for Phriendly Phishing to intervene.
+    2. New IT Investments:
+    - Trigger: Announcements of new investments in IT security.
+    - Implication: Such investments imply that the organization is prioritizing security and may be actively seeking advanced phishing training solutions.
+    3. Organizational Growth:
+    - Trigger: Increase in headcount due to hiring, acquisitions, or mergers.
+    - Implication: Growth periods imply higher chances of human error, making it a prime time to adopt improved training to reduce mistakes.
+    4. Leadership Changes:
+    - Trigger: Changes in {input_target_url}’s security leadership (e.g., a new CISO).
+    - Implication: New leadership implies openness to fresh strategies and solutions to enhance the organization’s security posture.
+    5. Regulatory Changes:
+    - Trigger: Updates to regulations affecting {input_target_url} (e.g., APRA, ISO certifications, or Australian/New Zealand Government guidelines).
+    - Implication: Regulatory changes imply a need to update security training, which provides an opportunity to emphasize the importance of keeping the organization’s certifications current.
+
+    OUTPUT REQUIREMENTS:
+    - Audience: Busy C-level executive with limited time.
+    - Response must be detailed yet concise, emphasizing figures, metrics, monetary values, changes, and percentages.
+    - Output must consist only of plain text triggers—no markdown, no JSON.
+    - Exclude any introduction or conclusion; provide only the list.
+
+    OUTPUT TEMPLATE: For each trigger, use this template:
+
+    Trigger: Exact title.
+    Source: Exact URL + "Published" or "Accessed" date.
+    Trigger Details: 3-5 bullet points summarizing key details.
+    Risk Identified: Clearly describe the cybersecurity risks introduced by the trigger in 3-5 bullet points. Explain how these risks could impact {input_target_url} in terms of operational metrics, financial losses, reputation damage, or compliance violations.
+    CISO Implications: Describe how these risks could affect the CISO at {input_target_url} and what the consequences could be if they fail to act.
+    Time Sensitivity: Justify why immediate action is necessary. Argue why now is the right time for the CISO to invest in phishing training for employees.
+    Angle for CISO: This is the most critical part of your response. Clearly explain how Phriendly Phishing’s phishing awareness training, cybersecurity employee education, or Phish Focus can help the CISO at {input_target_url} mitigate or reduce the impact of the identified risks. Provide a direct and specific connection between the TRIGGER and the SOLUTION.
+
+    EXAMPLE:
+    
+    Trigger: Westpac impacted by APRA's Proposed Cybersecurity Governance Reforms  
+    Source: https://www.investmentlawwatch.com/2025/03/21/australia-apra-proposes-reforms-to-strengthen-governance-standards/ (2025-03-21)  
+    Trigger Details:  
+    - Mandatory third-party board assessments every 3 years  
+    - Extended conflict management requirements for banks/insurers  
+    - 10-year tenure limit for non-executive directors  
+    Risk Identified:  
+    - Increased personal liability for CISOs under strengthened governance  
+    - Need to document employee security competency metrics  
+    - Compliance costs estimated to rise 18-22% for ASX-listed companies  
+    CISO Implications: Current security training programs likely insufficient for new "appropriate skills and capabilities" requirements for boards and staff.  
+    Time sensitive: Reforms enter consultation phase June 2025, with implementation starting 2026. If Westpac is an early adopter they can gain compliance advantage.  
+    Angle for CISO: Phriendly Phishing's employee cyber training and automated compliance reporting directly addresses 4/7 proposed APRA requirements, including director education and staff capability assessments.
+    """)
+]
+
+TRIGGER_ANGLES_PERSONA_1_MESSAGES_BU = [
+    ("system",
+     """ROLE: You are a research assistant for Phriendly Phishing (https://www.phriendlyphishing.com), a B2B company specializing in employee security awareness, phishing simulation training, and phishing detection and remediation tools. Phriendly Phishing primarily serves businesses in Australia and New Zealand.
+   
+    Phriendly Phishing Value proposition for {input_target_url}:
+    - Engaging Training: Drives lasting behavioral change with security awareness and phishing simulation training, reducing click-through rates, phishing risks, and increasing reported emails.
+    - Tailored Learning: Delivers customized cybersecurity training for each department, achieving 85%+ completion rates.
+    - Localized Content: Optimized for Australian and New Zealand audiences, boosting training completion rates over generic alternatives.
+    - Phish Focus: Enhances email security with rapid threat detection, one-click remediation, and phishing simulations.
+    - Managed Service: Expert specialists handle planning, training, communications, campaigns, analytics, and ongoing support to strengthen cybersecurity defenses.
 
     TARGET PERSONA: Chief Information Security Officer (CISO) at {input_target_url}
     1. Pain points -> value proposition:
@@ -266,7 +357,8 @@ TRIGGER_ANGLES_PERSONA_1_MESSAGES = [
         - Minimise business disruption from cyber incidents
     """),
     ("human",
-     """OBJECTIVE: Thoroughly research the target account {input_target_url} to identify the 5 most RECENT + RELEVANT triggers for the CISO that will lead to a business opportunity for Phriendly Phishing.
+     """
+     OBJECTIVE: Thoroughly research the target account {input_target_url} to identify the 5 most RECENT + RELEVANT triggers for the CISO that will lead to a business opportunity for Phriendly Phishing.
 
     STEPS: Search for angles in the following sources:
     1. News about {input_target_url} (Since November 2024)
@@ -283,18 +375,60 @@ TRIGGER_ANGLES_PERSONA_1_MESSAGES = [
     7. Changes to regulations that affect {input_target_url} (i.e. APRA, ISO Certifications, Australian/New Zealand Government guidelines) -> Can be used as trigger to engage and reiterate the importance of keeping their security training up to date to make sure they keep the certifications 
 
     OUTPUT REQUIREMENTS:
-    - Your audience is a busy c-level executive with limited time. Response must be detailed with medium brevity, focused on figures, metrics, monetary values, changes, and percentages.
+    - Your audience is a busy c-level executive with limited time. Response must be detailed with medium brevity, focused on figures, metrics, money, values, changes, or percentages.
     - Your response must only include the triggers in plain text. No markdown and No JSON.
     - Exclude introduction and conclusion text: Only respond with the list.
 
     OUTPUT TEMPLATE: For each trigger, use this template:
 
     Trigger: Title of the trigger
-    Source: Exact source URL and publish/access date
-    Trigger details: 3-5 bullet points summary of trigger
+    Source: Exact source URL and "Published" or "Accessed" date
+    Trigger details: 3-5 bullet points. Summarize the critical details of the trigger
     Risk identified: 3-5 bullet points. Describe the cyber security risk introduced by the TRIGGER. How could it impact {input_target_url}'s operational metrics, finances, reputation, or compliance standing?",
     CISO implications: Explain how this risk affects the CISO at {input_target_url} and what the implications are if they don't act
     Time sensitive: Argue why this is the right time for the CISO to take action and invest in phishing training for their employees.
-    Angle for CISO: You will be evaluated on this above all else. Explain why Phriendly Phishing's phishing / cyber security employee training or Phish focus can support the CISO to mitigate/reduce the impact of the RISK identified from this TRIGGER. Be as specific and clear as possible about the connection. 
+    Angle for CISO: You will be evaluated on this above all else. Explain why Phriendly Phishing's phishing awareness / cyber security employee training or Phish focus can support the CISO to mitigate/reduce the impact of the RISK identified from this TRIGGER. Be as specific and clear as possible about the connection. 
+    
+    EXAMPLE:
+    
+    Trigger: Westpac impacted by APRA's Proposed Cybersecurity Governance Reforms  
+    Source: https://www.investmentlawwatch.com/2025/03/21/australia-apra-proposes-reforms-to-strengthen-governance-standards/ (2025-03-21)  
+    Trigger details:  
+    - Mandatory third-party board assessments every 3 years  
+    - Extended conflict management requirements for banks/insurers  
+    - 10-year tenure limit for non-executive directors  
+    Risk identified:  
+    - Increased personal liability for CISOs under strengthened governance  
+    - Need to document employee security competency metrics  
+    - Compliance costs estimated to rise 18-22% for ASX-listed companies  
+    CISO implications: Current security training programs likely insufficient for new "appropriate skills and capabilities" requirements for boards and staff.  
+    Time sensitive: Reforms enter consultation phase June 2025, with implementation starting 2026. If Westpac is an early adopter they can gain compliance advantage.  
+    Angle for CISO: Phriendly Phishing's employee cyber training and automated compliance reporting directly addresses 4/7 proposed APRA requirements, including director education and staff capability assessments.
     """)
 ]
+
+ 
+
+# Trigger: $147B Australian IT Security Spending Surge  
+# Source: https://www.techrepublic.com/article/australian-it-spending-gartner-it-spending-forecast/ (2024-09-17)  
+# Trigger details:  
+# - 8.7% YoY increase in cybersecurity budgets  
+# - 82% of CIOs prioritizing employee risk mitigation  
+# - Windows 10 EOL forcing $700M+ in endpoint security upgrades  
+# Risk identified:  
+# - Budget allocations temporary without measurable ROI  
+# - Legacy training methods don't leverage new AI security stacks  
+# - Hardware refreshes create new phishing vectors  
+# CISO implications:  
+# Must demonstrate strategic alignment of security spending with Post26 digital transformation goals.  
+# Time sensitive:  
+# 2025 budget approvals conclude April-June. Deferred training investments risk losing allocated funds.  
+# Angle for CISO:  
+# Phriendly Phishing's API integrations with Microsoft Purview and Defender provide real-time training adjustments based on endpoint upgrade status, ensuring maximum ROI from new hardware investments.
+
+    # Phriendly Phishing Value proposition for {input_target_url}:
+    # - Engaging Training: Offers security awareness and phishing simulation training designed to drive long-lasting behavioral change among their employees (Decrease in click-through rates on phishing emails, Decreased phishing risk within an organization, Increase of reported emails by employees of a company)
+    # - Tailored Learning: Provides customized learning experiences about cyber security, tailored to the unique needs of each department within their organization (High 85+ percent completion rates of security awareness training within an organisation)
+    # - Localized Content: Features content specifically localized for Australian and New Zealand audiences, resulting in higher employee training completion rates compared to generic alternatives.
+    # - Phish focus: Empowers organizations with rapid threat detection for all of their employee inboxes, one-click remediation, and phishing simulations, enhancing email security to minimize risks efficiently and effectively.
+    # - Managed service: Dedicated Managed Service Specialists deliver tailored cyber security solutions, overseeing planning, implementation, training, communications, campaign delivery, analytics, and check-ins to enhance employee awareness, engagement, and defense against evolving cyber threats.
