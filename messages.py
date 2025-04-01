@@ -365,7 +365,6 @@ TRIGGER_INDUSTRY_ANGLES_PERSONA_1_MESSAGES = [
     1. News about {input_target_url}'s top competitors (Since November 2024)
     2. News about similar companies to {input_target_url} (Since November 2024)
     3. News about {input_target_url}'s sub-industry (Since November 2024)
-    4. News about companies in Australia or New Zealand (Since November 2024)
 
     TRIGGER TOPICS and SOLUTION from Phriendly Phishing 
     1. Cyber Attacks & Breaches:
