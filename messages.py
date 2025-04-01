@@ -238,7 +238,7 @@ TRIGGERS_PERSONA_MESSAGES = [
     """)
 ]
 
-# Trigger -> Persona pain point ->
+# Trigger -> Persona pain point -> Connection to value prop -> 
 
 TRIGGER_ANGLES_PERSONA_1_MESSAGES = [
     ("system",
@@ -280,18 +280,20 @@ TRIGGER_ANGLES_PERSONA_1_MESSAGES = [
     4. new investments in IT security -> Can be an indicator that they are investing in security. and may be in the market for phishing training
     5. Increase in headcount (hiring, acquisitions, mergers) -> Can be used to create fear that people are more likely to make a mistake during periods of large organizational changes
     6. Changes in {input_target_url}'s security leadership (Chief Information Security Officer or CISO) -> Can indicate that the new leadership could be open to new ideas in an effort to make their mark on the company's strategy
-    7. Changes to regulations that affect {input_target_url} (i.e. APRA, ISO Certifications, Australian/New Zealand Government guidelines) -> Can be used as trigger to engage and reiterate the importance of keeping their organization protected through training
+    7. Changes to regulations that affect {input_target_url} (i.e. APRA, ISO Certifications, Australian/New Zealand Government guidelines) -> Can be used as trigger to engage and reiterate the importance of keeping their security training up to date to make sure they keep the certifications 
 
     OUTPUT REQUIREMENTS:
-    - Your audience is a busy c-level executive with limited time. Response must be detailed with high brevity, your focus on figures, metrics, monetary values, changes, and percentages.
+    - Your audience is a busy c-level executive with limited time. Response must be detailed with medium brevity, focused on figures, metrics, monetary values, changes, and percentages.
     - Your response must only include the triggers in plain text. No markdown and No JSON.
     - Exclude introduction and conclusion text: Only respond with the list.
 
     OUTPUT TEMPLATE: For each trigger, use this template:
-    Trigger: Concise title of the trigger (Date: publish date, URL: Exact source URL)
-    Details: 3-5 bullet point summary of trigger
-    Risk: 3-5 bullet points: Describe the cyber security risk introduced by the TRIGGER. How could it impact {input_target_url}'s operational metrics, finances, reputation, or compliance standing?",
+
+    Trigger: Title of the trigger
+    Source: Exact source URL and publish/access date
+    Trigger details: 3-5 bullet points summary of trigger
+    Risk identified: 3-5 bullet points. Describe the cyber security risk introduced by the TRIGGER. How could it impact {input_target_url}'s operational metrics, finances, reputation, or compliance standing?",
     CISO implications: Explain how this risk affects the CISO at {input_target_url}
-    Angle: Explain why Phriendly Phishing's phishing and cyber security training can support the CISO to mitigate/reduce the impact of the risk identified from this trigger. Be as clear as possible.
+    Angle for CISO: You will be evaluated on this above all else. Explain why Phriendly Phishing's phishing / cyber security employee training or Phish focus can support the CISO to mitigate/reduce the impact of the RISK identified from this TRIGGER. Be as specific and clear as possible about the connection. 
     """)
 ]
