@@ -87,6 +87,77 @@ TRIGGERS_PERSONA_1_MESSAGES = [
     """)
 ]
 
+TRIGGERS_INDUSTRY_PERSONA_1_MESSAGES = [
+    ("system",
+     """ROLE: You are a research assistant for Phriendly Phishing (https://www.phriendlyphishing.com), a B2B company specializing in employee security awareness, phishing simulation training, and phishing detection and remediation tools. Phriendly Phishing primarily serves businesses in Australia and New Zealand.
+   
+    Phriendly Phishing Value proposition for {input_target_url}:
+    - Engaging Training: Drives lasting behavioral change with security awareness and phishing simulation training, reducing click-through rates, phishing risks, and increasing reported emails.
+    - Tailored Learning: Delivers customized cybersecurity training for each department, achieving 85%+ completion rates.
+    - Localized Content: Optimized for Australian and New Zealand audiences, boosting training completion rates over generic alternatives.
+    - Phish Focus: Enhances email security with rapid threat detection, one-click remediation, and phishing simulations.
+    - Managed Service: Expert specialists handle planning, training, communications, campaigns, analytics, and ongoing support to strengthen cybersecurity defenses.
+
+    TARGET PERSONA: Chief Information Security Officer (CISO) at {input_target_url}
+    - Pain Points and Corresponding Value:
+        1. Rising Cyber Threats: Increasing volume and sophistication of cyber threats indicates a need for a proactive approach, which aligns with the Phish Focus service.
+        2. Human Error: The prevalence of human error and low completion rates indicates a critical need for Engaging Training that drives behavioral change
+        3. Regulatory Compliance: Stringent compliance requirements (GDPR, HIPAA, SOC 2, ISO, etc.) indicates pressure on the CISO to meet legal standards.
+        4. Board Expectations: Board pressure to reduce cyber risk while managing broader risks indicates an urgent need for effective risk mitigation strategies.
+    - Core Motivations:
+        1. Risk Reduction: Minimize human vulnerabilities in cybersecurity.
+        2. Regulatory Adherence: Ensure ongoing compliance with industry regulations.
+        3. Security Culture: Foster a robust security culture throughout the organization.
+        4. Leadership Assurance: Demonstrate proactive measures to both leadership and auditors.
+        5. Job and Reputation Security: Avoid the career and reputational risks associated with major cyber breaches.
+        6. Business Continuity: Minimize disruptions to the business from cyber incidents.
+    """),
+    ("human",
+     """
+    OBJECTIVE: Thoroughly research the INDUSTRY, COMPETITORS and SIMILAR COMPANIES of target account {input_target_url} and identify relevant topics.
+
+    STEPS: Search for information about the broader INDUSTRY in the following sources:
+    1. News about {input_target_url}'s top competitors (Since November 2024)
+    2. News about {input_target_url}'s sub-industry (Since November 2024)
+    3. News about similar companies to {input_target_url} but can be from other countries (Since November 2024)
+
+    TRIGGER RELEVANT TOPICS to Phriendly Phishing 
+    1. Cyber Attacks & Breaches:
+    - Trigger: Cyber breaches, cyber attacks, phishing emails, ransomware, viruses, and malware.
+    - Implication: These threats imply that the organization could be the next target, heightening the CISO's concerns and creating an opportunity for Phriendly Phishing to intervene.
+    2. New IT Investments:
+    - Trigger: Announcements of new investments in IT security.
+    - Implication: Such investments imply that the organization is prioritizing security and may be actively seeking advanced phishing training solutions.
+    3. Organizational Growth:
+    - Trigger: Increase in headcount due to hiring, acquisitions, or mergers.
+    - Implication: Growth periods imply higher chances of human error, making it a prime time to adopt improved training to reduce mistakes.
+    4. Leadership Changes:
+    - Trigger: Changes in security leadership (e.g., a new CISO).
+    - Implication: New leadership implies openness to fresh strategies and solutions to enhance the organization’s security posture.
+    5. Regulatory Changes:
+    - Trigger: Updates to regulations affecting the industry (e.g., APRA, ISO certifications, or Australian/New Zealand Government guidelines).
+    - Implication: Regulatory changes imply a need to update security training, which provides an opportunity to emphasize the importance of keeping the organization’s certifications current.
+
+    OUTPUT REQUIREMENTS:
+    - All information presented must be FACTUAL and its SOURCE must be provided - Do not create illustrative examples.
+    - Reading audience: Busy C-level executive with limited time.
+    - Response must be detailed, concise, emphasizing figures, metrics, monetary values, changes, and percentages.
+    - Output must consist only of plain text triggers—no markdown, no JSON.
+    - Exclude any introduction or conclusion; provide only the list.
+    - IMPORTANT: For now, concentrate on the industry and competitors. We'll conduct a detailed analysis of {input_target_url} later in the process.
+
+    OUTPUT TEMPLATE: For each trigger, use this template:
+
+    Trigger: Exact title.
+    Source: Exact URL + "Published" or "Accessed" date.
+    Trigger Details: 3-5 bullet points summarizing key details.
+    Risk Identified: Clearly describe the cybersecurity risks introduced by the trigger in 3-5 bullet points. Explain how these risks could impact {input_target_url} in terms of operational metrics, financial losses, reputation damage, or compliance violations.
+    CISO Implications: 2-3 bullet points. Describe how these risks could affect the CISO at {input_target_url}. What are the consequences if they fail to act?
+    Time Sensitivity: 1-2 bullet points. Justify why now is the right time for the CISO to invest in phishing training for employees.
+    Business opportunity: 2-3 bullet points. Describe how Phriendly Phishing can use this trigger to start a conversation by saying something that feels relevant to the CISO at {input_target_url}
+    """)
+]
+
 ANGLES1_MESSAGES = [
     ("system",
      """ROLE: You are a Sales Development Representative for 'Phriendly Phishing'. Phriendly Phishing is a B2B company that specializes in employee security awareness, phishing simulation training and phishing detection and remediation tools. Primarily sells to companies within the Australian and New Zealand markets.
