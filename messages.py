@@ -26,7 +26,7 @@ TRIGGERS_PERSONA_1_MESSAGES = [
     """),
     ("human",
      """
-    OBJECTIVE: Thoroughly research the target account {input_target_url} to identify 5 most recent and relevant cybersecurity TRIGGERS affecting their CISO which represents a business opportunity for Phriendly Phishing.
+    OBJECTIVE: Thoroughly research the target account {input_target_url} to identify 5 most recent and relevant cybersecurity TRIGGERS affecting their CISO and describe how it represents a business opportunity for Phriendly Phishing.
 
     STEPS: Search for angles about the target in the following sources:
     1. News about {input_target_url} (Since November 2024)
