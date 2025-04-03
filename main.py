@@ -15,7 +15,7 @@ import json
 from mappings import BPSTEP_MAPPINGS
 
 # Import messages from external file
-from messages import ANGLES1_MESSAGES, TRIGGERS_TGT_CISO_1
+from messages import ANGLES1_MESSAGES, TRIGGERS_TGT_CISO_1, TRIGGERS_IND_CISO_1
 
 # Load environment variables
 load_dotenv()
