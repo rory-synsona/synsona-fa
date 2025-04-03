@@ -69,7 +69,7 @@ def run_bpstep_Triggers(request_data: PieRequest, messages) -> dict:
 
     chat_sonar_dr = ChatPerplexity(model="sonar-deep-research")
     # chat = ChatPerplexity(model="sonar")
-    messages = TRIGGERS_TGT_CISO_1
+    # messages = TRIGGERS_TGT_CISO_1
     prompt_template = ChatPromptTemplate.from_messages(messages)
     chain = prompt_template | chat_sonar_dr
     response = chain.invoke(
