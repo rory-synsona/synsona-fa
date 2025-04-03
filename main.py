@@ -60,7 +60,7 @@ def run_bpstep_Angles1(request_data: PieRequest) -> dict:
 
     return response
 
-def run_bpstep_Triggers(request_data: PieRequest) -> dict:
+def run_bpstep_Triggers(request_data: PieRequest, messages) -> dict:
     # get variables from input_json in request
     input_json_dict = request_data.input_json
     input_target_url = input_json_dict.get("target_url")
@@ -112,10 +112,22 @@ async def process_request_async_v1(request_data: PieRequest) -> dict:
     # Use the mappings to determine the action based on bpstep_id
     bpstep = BPSTEP_MAPPINGS.get(request_data.bpstep_id)
 
-    if bpstep == "Triggers":
-        print("bpstep_id is Triggers - 1742963840776x872202725975654400")
+    if bpstep == "Company triggers":
+        print("bpstep_id is 'Company triggers' 1742963840776x872202725975654400")
 
-        response = await asyncio.to_thread(run_bpstep_Triggers, request_data)
+        response = await asyncio.to_thread(run_bpstep_Triggers, request_data, TRIGGERS_TGT_CISO_1)
+
+        # Extract values from usage_metadata
+        input_tokens = response.usage_metadata['input_tokens']
+        output_tokens = response.usage_metadata['output_tokens']
+        # output_reasoning_tokens = response.usage_metadata['output_reasoning_tokens']
+
+        await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
+    
+    elif bpstep == "Industry triggers":
+        print("bpstep_id is 'Industry triggers' 1743642197570x161409188642422800")
+
+        response = await asyncio.to_thread(run_bpstep_Triggers, request_data, TRIGGERS_IND_CISO_1)
 
         # Extract values from usage_metadata
         input_tokens = response.usage_metadata['input_tokens']
