@@ -103,7 +103,7 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
             temperature=input_model_temp,      # Adjust temperature for creativity
             top_p=input_model_top_p,  # Adjust top_p for sampling
         )
-    elif input_model_name in ["sonar", "sonar-deep-research"]:
+    elif input_model_name in ["sonar", "sonar-pro", "sonar-deep-research"]:
         print("Using Sonar model: ", input_model_name)
         chat_model = ChatPerplexity(
             model=input_model_name,
