@@ -10,6 +10,7 @@ from langchain.chat_models import init_chat_model
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_community.chat_models import ChatPerplexity
 from langchain_openai import ChatOpenAI
+from langchain_anthropic import ChatAnthropic
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 import json
@@ -87,7 +88,8 @@ def run_bpstep_Triggers(request_data: PieRequest, messages) -> dict:
     return response
 
 def run_bpstep_generic(request_data: PieRequest) -> dict:
-    # get variables from input_json in request
+    
+    # Get EXPECTED variables from input_json in request
     input_json_dict = request_data.input_json
     input_prompt_text = input_json_dict.get("prompt_text")
     input_model_name = input_json_dict.get("model_name")
@@ -116,25 +118,50 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
             model=input_model_name,
             reasoning_effort="medium"
         )
-    elif input_model_name in ["gemini-2.0-flash", "gemini-2.0-flash-lite", "gemini-2.5-pro-exp-03-25"]:
+    elif input_model_name in [
+        "gemini-2.0-flash",
+        "gemini-2.0-flash-lite",
+        "gemini-2.5-pro-exp-03-25"
+    ]:
         print("Using Google model: ", input_model_name)     
         chat_model = ChatGoogleGenerativeAI(
             model=input_model_name
         )
+    elif input_model_name in [
+        "claude-3-5-haiku-latest",
+        "claude-3-5-sonnet-latest",
+        "claude-3-7-sonnet-latest",
+        "claude-3-opus-latest"
+    ]:
+        print("Using Anthropic model: ", input_model_name)
+        chat_model = ChatAnthropic(
+            model=input_model_name,
+            temperature=input_model_temp,
+            top_p=input_model_top_p,
+        )
     else:
-        print("Unknown model name. Please provide a valid model.")
+        print("ERROR: Unknown model name. Please provide a valid model.")
+        return {"error": "Unknown model name. Please provide a valid model."}
 
     messages = [
         ("system", "Today's date is {date}"),
         ("human", "{input_prompt_text}")
     ]
 
+    invoke_params = {
+        "input_prompt_text": input_prompt_text,
+        "date": date.today().isoformat(),
+        "input_target_url": input_json_dict.get("target_url"),
+        "input_target_company": input_json_dict.get("target_company")
+    }
+
+    # Conditionally add invoke params based on input_json
+    # if input_target_url:
+    #    invoke_params["input_target_url"] = input_target_url
+
     prompt_template = ChatPromptTemplate.from_messages(messages)
     chain = prompt_template | chat_model
-    response = chain.invoke(
-        {"input_prompt_text": input_prompt_text,
-         "date": date.today().isoformat()}  # Use the current date in ISO format
-    )
+    response = chain.invoke(invoke_params)
 
     return response
 
@@ -202,74 +229,15 @@ async def process_request_async_v1(request_data: PieRequest) -> dict:
 
         await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
 
-    elif bpstep == "Angles persona 2":
-        print("bpstep_id is 'Angles persona 2' - 1743007304138x215986182283591680")
-        response = await asyncio.to_thread(run_bpstep_Angles1, request_data)
-
-        input_tokens = response.usage_metadata['input_tokens']
-        output_tokens = response.usage_metadata['output_tokens']
-        await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
-
-    elif bpstep == "Angles persona 3":
-        print("bpstep_id is 'Angles persona 3' - 1743007578100x896562523443036200")
-        response = await asyncio.to_thread(run_bpstep_Angles1, request_data)
-
-        input_tokens = response.usage_metadata['input_tokens']
-        output_tokens = response.usage_metadata['output_tokens']
-        await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
-
-    elif bpstep == "SDR email 1":
-        print("bpstep_id is 'SDR email 1' - 1743007958890x533155609689718800")
+    elif request_data.bpstep_id:
+        print("bpstep_id is generic: ", request_data.bpstep_id)
         response = await asyncio.to_thread(run_bpstep_generic, request_data)
 
         input_tokens = response.usage_metadata['input_tokens']
         output_tokens = response.usage_metadata['output_tokens']
         await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
-
-    elif bpstep == "SDR email 2":
-        print("bpstep_id is 'SDR email 2' - 1743008107420x694234347110137900")
-        response = await asyncio.to_thread(run_bpstep_generic, request_data)
-
-        input_tokens = response.usage_metadata['input_tokens']
-        output_tokens = response.usage_metadata['output_tokens']
-        await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
-
-    elif bpstep == "SDR email 3":
-        print("bpstep_id is 'SDR email 3' - 1743008147961x485549258569416700")
-        response = await asyncio.to_thread(run_bpstep_generic, request_data)
-
-        input_tokens = response.usage_metadata['input_tokens']
-        output_tokens = response.usage_metadata['output_tokens']
-        await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
-
-    elif bpstep == "LinkedIn message 1":
-        print("bpstep_id is 'LinkedIn message 1' - 1743706071501x986170635387142100")
-        response = await asyncio.to_thread(run_bpstep_generic, request_data)
-
-        input_tokens = response.usage_metadata['input_tokens']
-        output_tokens = response.usage_metadata['output_tokens']
-        await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
-
-    elif bpstep == "LinkedIn voice message script":
-        print("bpstep_id is 'LinkedIn voice message script' - 1743706125451x482733737766289400")
-        response = await asyncio.to_thread(run_bpstep_generic, request_data)
-
-        input_tokens = response.usage_metadata['input_tokens']
-        output_tokens = response.usage_metadata['output_tokens']
-        await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
-
-    elif bpstep == "Phone call script":
-        print("bpstep_id is 'Phone call script' - 1743706323661x613148516472062000")
-        response = await asyncio.to_thread(run_bpstep_generic, request_data)
-
-        input_tokens = response.usage_metadata['input_tokens']
-        output_tokens = response.usage_metadata['output_tokens']
-        await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
-
-    # Add more elif statements as needed for other mappings in BPSTEP_MAPPINGS
-
     else:
-        print("bpstep_id not found in mappings")
+        print("bpstep_id was empty")
 
     return
 
