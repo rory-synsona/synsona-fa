@@ -96,6 +96,9 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
     input_model_temp = input_json_dict.get("model_temp")
     input_model_top_p = input_json_dict.get("model_top_p")
 
+    input_target_url = input_json_dict.get("target_url")
+    input_target_company = input_json_dict.get("target_company")
+
     print("run_bpstep_Triggers: ", input_json_dict, " => ", input_prompt_text)
 
     if input_model_name in ["gpt-4o-mini", "gpt-4o"]:
@@ -151,8 +154,8 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
     invoke_params = {
         "input_prompt_text": input_prompt_text,
         "date": date.today().isoformat(),
-        "input_target_url": input_json_dict.get("target_url"),
-        "input_target_company": input_json_dict.get("target_company")
+        "input_target_url": input_target_url,
+        "input_target_company": input_target_company
     }
 
     # Conditionally add invoke params based on input_json
