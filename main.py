@@ -4,10 +4,12 @@ from pydantic import BaseModel
 import httpx
 import os
 import asyncio
+from datetime import date
 from dotenv import load_dotenv
 from langchain.chat_models import init_chat_model
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_community.chat_models import ChatPerplexity
+from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 import json
 
@@ -83,6 +85,45 @@ def run_bpstep_Triggers(request_data: PieRequest, messages) -> dict:
 
     return response
 
+def run_bpstep_generic(request_data: PieRequest) -> dict:
+    # get variables from input_json in request
+    input_json_dict = request_data.input_json
+    input_prompt_text = input_json_dict.get("prompt_text")
+    input_model_name = input_json_dict.get("model_name")
+    input_model_temp = input_json_dict.get("model_temp")
+    input_model_top_p = input_json_dict.get("model_top_p")
+
+    print("run_bpstep_Triggers: ", input_json_dict, " => ", input_prompt_text)
+
+    if input_model_name in ["gpt-4o-mini", "gpt-4o"]:
+        chat_model = ChatOpenAI(
+            model=input_model_name,  # Specify the model name
+            temperature=input_model_temp,      # Adjust temperature for creativity
+            top_p=input_model_top_p,  # Adjust top_p for sampling
+        )
+    elif input_model_name in ["sonar", "sonar-deep-research"]:
+        chat_model = ChatPerplexity(
+            model=input_model_name,
+            temperature=input_model_temp,
+            top_p=input_model_top_p,
+        )
+    else:
+        print("Unknown model name. Please provide a valid model.")
+
+    messages = [
+        ("system", "Today's date is {date}"),
+        ("human", "{input_prompt_text}")
+    ]
+
+    prompt_template = ChatPromptTemplate.from_messages(messages)
+    chain = prompt_template | chat_model
+    response = chain.invoke(
+        {"input_prompt_text": input_prompt_text,
+         "date": date.today().isoformat()}  # Use the current date in ISO format
+    )
+
+    return response
+
 async def send_post_callback_v1(response_content: str, i_tokens: int, o_tokens: int, o_r_tokens: int, request_data: PieRequest) -> dict:
     print("Sending post request (step=", request_data.step_id,") to Synsona Bubble App")
     bubble_app_url = os.getenv("SYNSONA_BUBBLE_URL_TEST")
@@ -146,6 +187,73 @@ async def process_request_async_v1(request_data: PieRequest) -> dict:
         # output_reasoning_tokens = response.usage_metadata['output_reasoning_tokens']
 
         await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
+
+    elif bpstep == "Angles persona 2":
+        print("bpstep_id is 'Angles persona 2' - 1743007304138x215986182283591680")
+        response = await asyncio.to_thread(run_bpstep_Angles1, request_data)
+
+        input_tokens = response.usage_metadata['input_tokens']
+        output_tokens = response.usage_metadata['output_tokens']
+        await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
+
+    elif bpstep == "Angles persona 3":
+        print("bpstep_id is 'Angles persona 3' - 1743007578100x896562523443036200")
+        response = await asyncio.to_thread(run_bpstep_Angles1, request_data)
+
+        input_tokens = response.usage_metadata['input_tokens']
+        output_tokens = response.usage_metadata['output_tokens']
+        await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
+
+    elif bpstep == "SDR email 1":
+        print("bpstep_id is 'SDR email 1' - 1743007958890x533155609689718800")
+        response = await asyncio.to_thread(run_bpstep_generic, request_data)
+
+        input_tokens = response.usage_metadata['input_tokens']
+        output_tokens = response.usage_metadata['output_tokens']
+        await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
+
+    elif bpstep == "SDR email 2":
+        print("bpstep_id is 'SDR email 2' - 1743008107420x694234347110137900")
+        response = await asyncio.to_thread(run_bpstep_generic, request_data)
+
+        input_tokens = response.usage_metadata['input_tokens']
+        output_tokens = response.usage_metadata['output_tokens']
+        await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
+
+    elif bpstep == "SDR email 3":
+        print("bpstep_id is 'SDR email 3' - 1743008147961x485549258569416700")
+        response = await asyncio.to_thread(run_bpstep_generic, request_data)
+
+        input_tokens = response.usage_metadata['input_tokens']
+        output_tokens = response.usage_metadata['output_tokens']
+        await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
+
+    elif bpstep == "LinkedIn message 1":
+        print("bpstep_id is 'LinkedIn message 1' - 1743706071501x986170635387142100")
+        response = await asyncio.to_thread(run_bpstep_generic, request_data)
+
+        input_tokens = response.usage_metadata['input_tokens']
+        output_tokens = response.usage_metadata['output_tokens']
+        await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
+
+    elif bpstep == "LinkedIn voice message script":
+        print("bpstep_id is 'LinkedIn voice message script' - 1743706125451x482733737766289400")
+        response = await asyncio.to_thread(run_bpstep_generic, request_data)
+
+        input_tokens = response.usage_metadata['input_tokens']
+        output_tokens = response.usage_metadata['output_tokens']
+        await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
+
+    elif bpstep == "Phone call script":
+        print("bpstep_id is 'Phone call script' - 1743706323661x613148516472062000")
+        response = await asyncio.to_thread(run_bpstep_generic, request_data)
+
+        input_tokens = response.usage_metadata['input_tokens']
+        output_tokens = response.usage_metadata['output_tokens']
+        await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
+
+    # Add more elif statements as needed for other mappings in BPSTEP_MAPPINGS
+
     else:
         print("bpstep_id not found in mappings")
 
