@@ -10,6 +10,7 @@ from langchain.chat_models import init_chat_model
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_community.chat_models import ChatPerplexity
 from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 import json
 
@@ -96,16 +97,29 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
     print("run_bpstep_Triggers: ", input_json_dict, " => ", input_prompt_text)
 
     if input_model_name in ["gpt-4o-mini", "gpt-4o"]:
+        print("Using OpenAI model: ", input_model_name)
         chat_model = ChatOpenAI(
             model=input_model_name,  # Specify the model name
             temperature=input_model_temp,      # Adjust temperature for creativity
             top_p=input_model_top_p,  # Adjust top_p for sampling
         )
     elif input_model_name in ["sonar", "sonar-deep-research"]:
+        print("Using Sonar model: ", input_model_name)
         chat_model = ChatPerplexity(
             model=input_model_name,
             temperature=input_model_temp,
             top_p=input_model_top_p,
+        )
+    elif input_model_name in ["o3-mini", "o3"]:
+        print("Using OpenAI reasoning model: ", input_model_name)
+        chat_model = ChatOpenAI(
+            model=input_model_name,
+            reasoning_effort="medium"
+        )
+    elif input_model_name in ["gemini-2.0-flash", "gemini-2.0-flash-lite", "gemini-2.5-pro-exp-03-25"]:
+        print("Using Google model: ", input_model_name)     
+        chat_model = ChatGoogleGenerativeAI(
+            model=input_model_name
         )
     else:
         print("Unknown model name. Please provide a valid model.")
