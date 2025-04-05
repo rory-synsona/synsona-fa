@@ -96,8 +96,8 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
     input_model_temp = input_json_dict.get("model_temp")
     input_model_top_p = input_json_dict.get("model_top_p")
 
-    input_target_url = input_json_dict.get("target_url")
-    input_target_company = input_json_dict.get("target_company")
+    # input_target_url = input_json_dict.get("target_url")
+    # input_target_company = input_json_dict.get("target_company")
 
     print("run_bpstep_Triggers: ", input_json_dict, " => ", input_prompt_text)
 
@@ -146,17 +146,24 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
         print("ERROR: Unknown model name. Please provide a valid model.")
         return {"error": "Unknown model name. Please provide a valid model."}
 
+    # set messages for the llm
     messages = [
         ("system", "Today's date is {date}"),
         ("human", "{input_prompt_text}")
     ]
 
+    # set parameters for running the llm
     invoke_params = {
         "input_prompt_text": input_prompt_text,
-        "date": date.today().isoformat(),
-        "input_target_url": input_target_url,
-        "input_target_company": input_target_company
+        "date": date.today().isoformat()
     }
+
+    # invoke_params = {
+    #     "input_prompt_text": input_prompt_text,
+    #     "date": date.today().isoformat(),
+    #     "input_target_url": input_target_url,
+    #     "input_target_company": input_target_company
+    # }
 
     # Conditionally add invoke params based on input_json
     # if input_target_url:
@@ -194,53 +201,55 @@ async def send_post_callback_v1(response_content: str, i_tokens: int, o_tokens: 
 async def process_request_async_v1(request_data: PieRequest) -> dict:
     print("Starting process_request_async")
 
+    print("bpstep_id is generic: ", request_data.bpstep_id)
+    response = await asyncio.to_thread(run_bpstep_generic, request_data)
+
+    input_tokens = response.usage_metadata['input_tokens']
+    output_tokens = response.usage_metadata['output_tokens']
+    await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
+
     # Use the mappings to determine the action based on bpstep_id
-    bpstep = BPSTEP_MAPPINGS.get(request_data.bpstep_id)
+    # bpstep = BPSTEP_MAPPINGS.get(request_data.bpstep_id)
 
-    if bpstep == "Company triggers":
-        print("bpstep_id is 'Company triggers' 1742963840776x872202725975654400")
+    # if bpstep == "Company triggers":
+    #     print("bpstep_id is 'Company triggers' 1742963840776x872202725975654400")
 
-        response = await asyncio.to_thread(run_bpstep_Triggers, request_data, TRIGGERS_TGT_CISO_1)
+    #     response = await asyncio.to_thread(run_bpstep_Triggers, request_data, TRIGGERS_TGT_CISO_1)
 
-        # Extract values from usage_metadata
-        input_tokens = response.usage_metadata['input_tokens']
-        output_tokens = response.usage_metadata['output_tokens']
-        # output_reasoning_tokens = response.usage_metadata['output_reasoning_tokens']
+    #     # Extract values from usage_metadata
+    #     input_tokens = response.usage_metadata['input_tokens']
+    #     output_tokens = response.usage_metadata['output_tokens']
+    #     # output_reasoning_tokens = response.usage_metadata['output_reasoning_tokens']
 
-        await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
+    #     await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
     
-    elif bpstep == "Industry triggers":
-        print("bpstep_id is 'Industry triggers' 1743642197570x161409188642422800")
+    # elif bpstep == "Industry triggers":
+    #     print("bpstep_id is 'Industry triggers' 1743642197570x161409188642422800")
 
-        response = await asyncio.to_thread(run_bpstep_Triggers, request_data, TRIGGERS_IND_CISO_1)
+    #     response = await asyncio.to_thread(run_bpstep_Triggers, request_data, TRIGGERS_IND_CISO_1)
 
-        # Extract values from usage_metadata
-        input_tokens = response.usage_metadata['input_tokens']
-        output_tokens = response.usage_metadata['output_tokens']
-        # output_reasoning_tokens = response.usage_metadata['output_reasoning_tokens']
+    #     # Extract values from usage_metadata
+    #     input_tokens = response.usage_metadata['input_tokens']
+    #     output_tokens = response.usage_metadata['output_tokens']
+    #     # output_reasoning_tokens = response.usage_metadata['output_reasoning_tokens']
 
-        await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
+    #     await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
 
-    elif bpstep == "Angles persona 1":
-        print("bpstep_id is Angles persona 1 - 1743007240371x889852377243582500")
-        response = await asyncio.to_thread(run_bpstep_Angles1, request_data)
+    # elif bpstep == "Angles persona 1":
+    #     print("bpstep_id is Angles persona 1 - 1743007240371x889852377243582500")
+    #     response = await asyncio.to_thread(run_bpstep_Angles1, request_data)
 
-        # Extract values from usage_metadata
-        input_tokens = response.usage_metadata['input_tokens']
-        output_tokens = response.usage_metadata['output_tokens']
-        # output_reasoning_tokens = response.usage_metadata['output_reasoning_tokens']
+    #     # Extract values from usage_metadata
+    #     input_tokens = response.usage_metadata['input_tokens']
+    #     output_tokens = response.usage_metadata['output_tokens']
+    #     # output_reasoning_tokens = response.usage_metadata['output_reasoning_tokens']
 
-        await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
+    #     await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
 
-    elif request_data.bpstep_id:
-        print("bpstep_id is generic: ", request_data.bpstep_id)
-        response = await asyncio.to_thread(run_bpstep_generic, request_data)
-
-        input_tokens = response.usage_metadata['input_tokens']
-        output_tokens = response.usage_metadata['output_tokens']
-        await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
-    else:
-        print("bpstep_id was empty")
+    # elif request_data.bpstep_id:
+        
+    # else:
+    #     print("bpstep_id was empty")
 
     return
 
@@ -261,6 +270,7 @@ async def pie_v1(request_data: PieRequest, http_request: Request):
     if token == "syn-e5f3a7d6c9b4f2a1c9d9e7b6a3f1b2c4":
         if request_data.bpstep_id:
             print("Headers: ", http_request.headers)
+            print("Client: ", http_request.client.host)
             response = process_request(request_data)
             return response
         else:
