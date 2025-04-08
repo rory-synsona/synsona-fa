@@ -318,7 +318,7 @@ async def process_request_async_v1(request_data: PieRequest) -> dict:
         output_tokens = usage.get("output_tokens", 0)
     else:
         print("res str: ", response)
-        normalized_response = str(response.content)
+        normalized_response = response.content
 
     await send_post_callback_v1(normalized_response, input_tokens, output_tokens, -1, request_data)
 
