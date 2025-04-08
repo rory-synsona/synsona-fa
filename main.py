@@ -319,7 +319,7 @@ async def process_request_async_v1(request_data: PieRequest) -> dict:
     else:
         print("res str: ", response)
 
-       if hasattr(response, 'content'):  # Check if 'response' has 'content' attribute
+    if hasattr(response, 'content'):  # Check if 'response' has 'content' attribute
         normalized_response = response.content
     else:
         normalized_response = response
