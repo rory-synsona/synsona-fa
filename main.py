@@ -10,7 +10,7 @@ from datetime import date
 from dotenv import load_dotenv
 from langchain.chat_models import init_chat_model
 from langchain_core.messages import HumanMessage, SystemMessage
-from langchain_community.chat_models import ChatPerplexity
+from langchain_perplexity import ChatPerplexity
 from langchain_openai import ChatOpenAI
 from langchain_anthropic import ChatAnthropic
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -150,7 +150,7 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
     # input_target_url = input_json_dict.get("target_url")
     # input_target_company = input_json_dict.get("target_company")
 
-    print("run_bpstep_Triggers: ", input_json_dict, " => ", input_prompt_text)
+    print("run_bpstep_Triggers: ", input_json_dict)
 
     if input_model_name in ["gpt-4o-mini", "gpt-4o"]:
         print("Using OpenAI model: ", input_model_name)
@@ -310,13 +310,14 @@ async def process_request_async_v1(request_data: PieRequest) -> dict:
     # Normalize the output content
     if isinstance(response, dict):
         print("res dict: ", response)
-        normalized_response = response.get("content") or response.get("output") or str(response)
+        normalized_response = response.get("content")
         usage = response.get("usage_metadata", {})
         input_tokens = usage.get("input_tokens", 0)
         output_tokens = usage.get("output_tokens", 0)
     else:
         print("res str: ", response)
-        normalized_response = str(response)
+        response_json = json.loads(response)
+        normalized_response = response_json.get("content", "")
 
     await send_post_callback_v1(normalized_response, input_tokens, output_tokens, -1, request_data)
 
