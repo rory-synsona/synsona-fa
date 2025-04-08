@@ -269,10 +269,12 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
             agent = create_tool_calling_agent(llm=chat_model, tools=tools, prompt=prompt_1)
             agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
             response = agent_executor.invoke({"input": input_prompt_text})
+            print("OUT111: ", response["output"])
             return response["output"]
     else:
         chain = prompt_template | chat_model
         response = chain.invoke(invoke_params)
+        print("RES111: ", response)
         return response
 
 async def send_post_callback_v1(response_content: str, i_tokens: int, o_tokens: int, o_r_tokens: int, request_data: PieRequest) -> dict:
@@ -316,8 +318,7 @@ async def process_request_async_v1(request_data: PieRequest) -> dict:
         output_tokens = usage.get("output_tokens", 0)
     else:
         print("res str: ", response)
-        response_json = json.loads(response)
-        normalized_response = response_json.get("content", "")
+        normalized_response = str(response.content)
 
     await send_post_callback_v1(normalized_response, input_tokens, output_tokens, -1, request_data)
 
