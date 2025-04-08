@@ -309,11 +309,13 @@ async def process_request_async_v1(request_data: PieRequest) -> dict:
 
     # Normalize the output content
     if isinstance(response, dict):
+        print("res dict: ", response)
         normalized_response = response.get("content") or response.get("output") or str(response)
         usage = response.get("usage_metadata", {})
         input_tokens = usage.get("input_tokens", 0)
         output_tokens = usage.get("output_tokens", 0)
     else:
+        print("res str: ", response)
         normalized_response = str(response)
 
     await send_post_callback_v1(normalized_response, input_tokens, output_tokens, -1, request_data)
