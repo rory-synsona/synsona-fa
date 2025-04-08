@@ -319,10 +319,10 @@ async def process_request_async_v1(request_data: PieRequest) -> dict:
     else:
         print("res str: ", response)
 
-        if response.content:
-            normalized_response = response.content
-        else:
-            normalized_response = response
+       if hasattr(response, 'content'):  # Check if 'response' has 'content' attribute
+        normalized_response = response.content
+    else:
+        normalized_response = response
 
     await send_post_callback_v1(normalized_response, input_tokens, output_tokens, -1, request_data)
 
