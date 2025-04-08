@@ -4,6 +4,8 @@ from pydantic import BaseModel
 import httpx
 import os
 import asyncio
+import requests
+import openai
 from datetime import date
 from dotenv import load_dotenv
 from langchain.chat_models import init_chat_model
@@ -13,6 +15,10 @@ from langchain_openai import ChatOpenAI
 from langchain_anthropic import ChatAnthropic
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.tools import tool
+from langchain.agents import Tool, initialize_agent, AgentExecutor, OpenAIFunctionsAgent, create_tool_calling_agent
+from langchain.agents import AgentExecutor
+from langchain.agents.agent_types import AgentType
 import json
 
 # Import the mappings from mappings.py
@@ -44,6 +50,49 @@ class PieRequest(BaseModel):
     wf_id: str
     step_id: str
     input_json: dict
+
+# Tool to call OpenAI with web_search_preview
+# def call_web_search(query: str) -> str:
+#     """Call OpenAI with web_search_preview tool enabled."""
+#     response = openai.ChatCompletion.create(
+#         model="gpt-4o",
+#         messages=[{"role": "user", "content": query}],
+#         tools=[{"type": "web_search_preview"}]
+#     )
+#     return response.choices[0].message["content"]
+
+
+# Tool to scrape a website
+def scrape_webpage_content(url: str) -> str:
+    request_url = "https://r.jina.ai/" + url
+    headers = {
+        "Authorization": "Bearer jina_56a782d10f5e4b71b9472f59577a4e0cDwU7yi_F5h2_r8C9I8YB2DyG6jei",
+        "X-Return-Format": "markdown",
+        "X-With-Links-Summary": "true"
+    }
+
+    response = requests.get(request_url, headers=headers)
+
+    if response.status_code == 200:
+        return response.text
+    else:
+        return f"Error: Unable to scrape {request_url}. Status code: {response.status_code}"
+
+# Tool to search the web using a query
+def search_internet(query: str) -> str:
+    request_url = "https://api.search.brave.com/res/v1/web/search?result_filter=web,news&q=" + query
+    headers = {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip",
+        "X-Subscription-Token": "BSA4Fjk_jYeHhcFQDMUxKtyfgB0JiTf"
+    }
+
+    response = requests.get(request_url, headers=headers)
+
+    if response.status_code == 200:
+        return response.json()  # Returns JSON response
+    else:
+        return f"Error: Unable to scrape {request_url}. Status code: {response.status_code}"
 
 def run_bpstep_Angles1(request_data: PieRequest) -> dict:
     # get variables from input_json in request
@@ -95,6 +144,8 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
     input_model_name = input_json_dict.get("model_name")
     input_model_temp = input_json_dict.get("model_temp")
     input_model_top_p = input_json_dict.get("model_top_p")
+
+    input_tool1 = input_json_dict.get("tool1")
 
     # input_target_url = input_json_dict.get("target_url")
     # input_target_company = input_json_dict.get("target_company")
@@ -158,6 +209,8 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
         "date": date.today().isoformat()
     }
 
+    prompt_template = ChatPromptTemplate.from_messages(messages)
+
     # invoke_params = {
     #     "input_prompt_text": input_prompt_text,
     #     "date": date.today().isoformat(),
@@ -169,11 +222,58 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
     # if input_target_url:
     #    invoke_params["input_target_url"] = input_target_url
 
-    prompt_template = ChatPromptTemplate.from_messages(messages)
-    chain = prompt_template | chat_model
-    response = chain.invoke(invoke_params)
+    if input_tool1:
+        print("running input_tool1: ", input_tool1)
+        
+        # 🧠 Step 3: Create the agent with tools
+        if input_tool1 == "openai_web_search":  
+            print("Using OpenAI web search tool")
+            
+            # prompt_1 = ChatPromptTemplate.from_messages(
+            #     [
+            #         ("system", "You are a helpful assistant"),
+            #         ("human", "{input}"),
+            #         # Placeholders fill up a **list** of messages
+            #         ("placeholder", "{agent_scratchpad}"),
+            #     ]
+            # )
 
-    return response
+            # agent = create_tool_calling_agent(llm=chat_model, tools=[{"type": "web_search_preview"}], prompt=prompt_1)
+            # agent_executor = AgentExecutor(agent=agent, tools=[{"type": "web_search_preview"}], verbose=True)
+            # response = agent_executor.invoke({"input": input_prompt_text})
+            # return response["output"]
+
+        elif input_tool1 == "brave_jina":
+            tools = [
+                Tool(
+                    name="scrape_webpage_content",
+                    func=scrape_webpage_content,
+                    description="Use this tool to scrape content from a webpage. Input should be the URL of the web page that you want to scrape. Output is the content of the page."
+                ),
+                Tool(
+                    name="search_internet",
+                    func=search_internet,
+                    description="Use this tool to search the internet. Input should be the search query. Output is a list of search results (Webpage titles and URLs) based on the query. Usually this is followed by a tool_call for scrape_webpage_content."
+                )
+            ]
+
+            prompt_1 = ChatPromptTemplate.from_messages(
+                [
+                    ("system", "You are a helpful assistant"),
+                    ("human", "{input}"),
+                    # Placeholders fill up a **list** of messages
+                    ("placeholder", "{agent_scratchpad}"),
+                ]
+            )
+
+            agent = create_tool_calling_agent(llm=chat_model, tools=tools, prompt=prompt_1)
+            agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+            response = agent_executor.invoke({"input": input_prompt_text})
+            return response["output"]
+    else:
+        chain = prompt_template | chat_model
+        response = chain.invoke(invoke_params)
+        return response
 
 async def send_post_callback_v1(response_content: str, i_tokens: int, o_tokens: int, o_r_tokens: int, request_data: PieRequest) -> dict:
     print("Sending post request (step=", request_data.step_id,") to Synsona Bubble App")
@@ -201,12 +301,22 @@ async def send_post_callback_v1(response_content: str, i_tokens: int, o_tokens: 
 async def process_request_async_v1(request_data: PieRequest) -> dict:
     print("Starting process_request_async")
 
+    input_tokens = 0
+    output_tokens = 0
+
     print("bpstep_id is generic: ", request_data.bpstep_id)
     response = await asyncio.to_thread(run_bpstep_generic, request_data)
 
-    input_tokens = response.usage_metadata['input_tokens']
-    output_tokens = response.usage_metadata['output_tokens']
-    await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
+    # Normalize the output content
+    if isinstance(response, dict):
+        normalized_response = response.get("content") or response.get("output") or str(response)
+        usage = response.get("usage_metadata", {})
+        input_tokens = usage.get("input_tokens", 0)
+        output_tokens = usage.get("output_tokens", 0)
+    else:
+        normalized_response = str(response)
+
+    await send_post_callback_v1(normalized_response, input_tokens, output_tokens, -1, request_data)
 
     # Use the mappings to determine the action based on bpstep_id
     # bpstep = BPSTEP_MAPPINGS.get(request_data.bpstep_id)
