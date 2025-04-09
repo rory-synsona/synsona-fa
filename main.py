@@ -152,12 +152,19 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
 
     print("run_bpstep_Triggers: ", input_json_dict)
 
+    # Prepare model kwargs
+    model_kwargs = {
+        "top_p": input_model_top_p,
+        "temperature": input_model_temp, 
+    }
+
     if input_model_name in ["gpt-4o-mini", "gpt-4o"]:
         print("Using OpenAI model: ", input_model_name)
         chat_model = ChatOpenAI(
             model=input_model_name,  # Specify the model name
-            temperature=input_model_temp,      # Adjust temperature for creativity
-            top_p=input_model_top_p,  # Adjust top_p for sampling
+            temperature=input_model_temp,
+            top_p=input_model_top_p,
+            model_kwargs=model_kwargs,  # Pass model kwargs
         )
     elif input_model_name in ["sonar", "sonar-pro", "sonar-deep-research"]:
         print("Using Sonar model: ", input_model_name)
@@ -165,11 +172,14 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
             model=input_model_name,
             temperature=input_model_temp,
             top_p=input_model_top_p,
+            model_kwargs=model_kwargs,  # Pass model kwargs
         )
     elif input_model_name in ["o3-mini", "o3"]:
         print("Using OpenAI reasoning model: ", input_model_name)
         chat_model = ChatOpenAI(
             model=input_model_name,
+            temperature=input_model_temp,
+            top_p=input_model_top_p,
             reasoning_effort="medium"
         )
     elif input_model_name in [
@@ -180,6 +190,9 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
         print("Using Google model: ", input_model_name)     
         chat_model = ChatGoogleGenerativeAI(
             model=input_model_name
+            temperature=input_model_temp,
+            top_p=input_model_top_p,
+            model_kwargs=model_kwargs,  # Pass model kwargs
         )
     elif input_model_name in [
         "claude-3-5-haiku-latest",
@@ -192,6 +205,7 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
             model=input_model_name,
             temperature=input_model_temp,
             top_p=input_model_top_p,
+            model_kwargs=model_kwargs,  # Pass model kwargs
         )
     else:
         print("ERROR: Unknown model name. Please provide a valid model.")
