@@ -84,48 +84,6 @@ def search_internet(query: str) -> str:
     else:
         return f"Error: Unable to scrape {request_url}. Status code: {response.status_code}"
 
-def run_bpstep_Angles1(request_data: PieRequest) -> dict:
-    # get variables from input_json in request
-    input_json_dict = request_data.input_json
-    input_triggers = input_json_dict.get("triggers")
-    input_target_company = input_json_dict.get("target_company")
-
-    print("run_bpstep_Angles1: ", input_json_dict)
-    print("input_triggers: ", input_triggers)   
-    print("input_target_company: ", input_target_company)
-
-    messages = ANGLES1_MESSAGES
-    chat = init_chat_model("o3-mini", model_provider="openai")
-    # chat = init_chat_model("gpt-4o-mini", model_provider="openai")
-    prompt_template = ChatPromptTemplate.from_messages(messages)  
-    chain = prompt_template | chat
-    response = chain.invoke({"input_target_company": input_target_company, "input_triggers": input_triggers})
-
-    return response
-
-def run_bpstep_Triggers(request_data: PieRequest, messages) -> dict:
-    # get variables from input_json in request
-    input_json_dict = request_data.input_json
-    input_target_url = input_json_dict.get("target_url")
-    
-    print("run_bpstep_Triggers: ", input_json_dict, " => ", input_target_url)
-
-    chat_sonar_dr = ChatPerplexity(model="sonar-deep-research")
-    # chat = ChatPerplexity(model="sonar")
-    # messages = TRIGGERS_TGT_CISO_1
-    prompt_template = ChatPromptTemplate.from_messages(messages)
-    chain = prompt_template | chat_sonar_dr
-    response = chain.invoke(
-        {"input_target_url": input_target_url},
-        config={
-            "web_search_options": {
-                "search_context_size": "high"
-            }
-        }
-    )
-
-    return response
-
 def run_bpstep_generic(request_data: PieRequest) -> dict:
     
     # Get EXPECTED variables from input_json in request
@@ -242,19 +200,23 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
                     agent = create_tool_calling_agent(llm=chat_model, tools=tools, prompt=prompt_1)
                     agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
                     response = agent_executor.invoke({"input": input_prompt_text})
-                    if isinstance(response, dict) and "error" in response:
-                        print(f"PIE_AGENT_ERROR: {response['error']}. Retrying... (Attempt {attempt + 1}/{max_retries})")
-                        raise LangChainException(response["error"])
-                    print("PIE_AGENT_RESPONSE: ", response["output"])
-                    return response["output"]
+                    if isinstance(response, dict) and response.get("response_content", {}).get("error"):
+                        error_message = response["response_content"]["error"]
+                        print(f"PIE_AGENT_ERROR: {error_message}. Retrying... (Attempt {attempt + 1}/{max_retries})")
+                        raise LangChainException(error_message)
+                    else:
+                        print("PIE_AGENT_RESPONSE: ", response["output"])
+                        return response["output"]
             else:
                 chain = prompt_template | chat_model
                 response = chain.invoke(invoke_params)
-                if isinstance(response, dict) and "error" in response:
-                    print(f"PIE_COMPLETION_ERROR: {response['error']}. Retrying... (Attempt {attempt + 1}/{max_retries})")
-                    raise LangChainException(response["error"])
-                print("PIE_COMPLETION_RESPONSE: ", response)
-                return response
+                if isinstance(response, dict) and response.get("response_content", {}).get("error"):
+                    error_message = response["response_content"]["error"]
+                    print(f"PIE_COMPLETION_ERROR: {error_message}. Retrying... (Attempt {attempt + 1}/{max_retries})")
+                    raise LangChainException(error_message)
+                else:
+                    print("PIE_COMPLETION_RESPONSE: ", response)
+                    return response
         except LangChainException as e:
             if attempt < max_retries - 1:
                 print(f"Rate limit or error detected. Retrying in {retry_delay} seconds... (Attempt {attempt + 1}/{max_retries})")
