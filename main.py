@@ -5,7 +5,6 @@ import httpx
 import os
 import asyncio
 import requests
-import openai
 from datetime import date
 from dotenv import load_dotenv
 from langchain.chat_models import init_chat_model
@@ -19,7 +18,9 @@ from langchain_core.tools import tool
 from langchain.agents import Tool, initialize_agent, AgentExecutor, OpenAIFunctionsAgent, create_tool_calling_agent
 from langchain.agents import AgentExecutor
 from langchain.agents.agent_types import AgentType
+from langchain_core.exceptions import LangChainException
 import json
+import time
 
 # Import the mappings from mappings.py
 from mappings import BPSTEP_MAPPINGS
@@ -50,17 +51,6 @@ class PieRequest(BaseModel):
     wf_id: str
     step_id: str
     input_json: dict
-
-# Tool to call OpenAI with web_search_preview
-# def call_web_search(query: str) -> str:
-#     """Call OpenAI with web_search_preview tool enabled."""
-#     response = openai.ChatCompletion.create(
-#         model="gpt-4o",
-#         messages=[{"role": "user", "content": query}],
-#         tools=[{"type": "web_search_preview"}]
-#     )
-#     return response.choices[0].message["content"]
-
 
 # Tool to scrape a website
 def scrape_webpage_content(url: str) -> str:
@@ -147,9 +137,6 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
 
     input_tool1 = input_json_dict.get("tool1")
 
-    # input_target_url = input_json_dict.get("target_url")
-    # input_target_company = input_json_dict.get("target_company")
-
     print("run_bpstep_Triggers: ", input_json_dict)
 
     # Prepare model kwargs
@@ -164,7 +151,6 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
             model=input_model_name,  # Specify the model name
             temperature=input_model_temp,
             top_p=input_model_top_p,
-            # model_kwargs=model_kwargs,  # Pass model kwargs
         )
     elif input_model_name in ["sonar", "sonar-pro", "sonar-deep-research"]:
         print("Using Sonar model: ", input_model_name)
@@ -172,14 +158,11 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
             model=input_model_name,
             temperature=input_model_temp,
             top_p=input_model_top_p,
-            # model_kwargs=model_kwargs,  # Pass model kwargs
         )
     elif input_model_name in ["o3-mini", "o3"]:
         print("Using OpenAI reasoning model: ", input_model_name)
         chat_model = ChatOpenAI(
             model=input_model_name,
-            # temperature=input_model_temp,
-            # top_p=input_model_top_p,
             reasoning_effort="medium"
         )
     elif input_model_name in [
@@ -192,7 +175,6 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
             model=input_model_name,
             temperature=input_model_temp,
             top_p=input_model_top_p,
-            # model_kwargs=model_kwargs,  # Pass model kwargs
         )
     elif input_model_name in [
         "claude-3-5-haiku-latest",
@@ -205,7 +187,6 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
             model=input_model_name,
             temperature=input_model_temp,
             top_p=input_model_top_p,
-            # model_kwargs=model_kwargs,  # Pass model kwargs
         )
     else:
         print("ERROR: Unknown model name. Please provide a valid model.")
@@ -225,71 +206,60 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
 
     prompt_template = ChatPromptTemplate.from_messages(messages)
 
-    # invoke_params = {
-    #     "input_prompt_text": input_prompt_text,
-    #     "date": date.today().isoformat(),
-    #     "input_target_url": input_target_url,
-    #     "input_target_company": input_target_company
-    # }
+    max_retries = 5  # Maximum number of retries
+    backoff_factor = 2  # Exponential backoff factor
+    retry_delay = 10  # Initial delay in seconds
 
-    # Conditionally add invoke params based on input_json
-    # if input_target_url:
-    #    invoke_params["input_target_url"] = input_target_url
+    for attempt in range(max_retries):
+        try:
+            if input_tool1:
+                print("running input_tool1: ", input_tool1)
+                
+                if input_tool1 == "openai_web_search":  
+                    print("Using OpenAI web search tool")
+                elif input_tool1 == "brave_jina":
+                    tools = [
+                        Tool(
+                            name="scrape_webpage_content",
+                            func=scrape_webpage_content,
+                            description="Use this tool to scrape content from a webpage. Input should be the URL of the web page that you want to scrape. Output is the content of the page."
+                        ),
+                        Tool(
+                            name="search_internet",
+                            func=search_internet,
+                            description="Use this tool to search the internet. Input should be the search query. Output is a list of search results (Webpage titles and URLs) based on the query. Usually this is followed by a tool_call for scrape_webpage_content."
+                        )
+                    ]
 
-    if input_tool1:
-        print("running input_tool1: ", input_tool1)
-        
-        # 🧠 Step 3: Create the agent with tools
-        if input_tool1 == "openai_web_search":  
-            print("Using OpenAI web search tool")
-            
-            # prompt_1 = ChatPromptTemplate.from_messages(
-            #     [
-            #         ("system", "You are a helpful assistant"),
-            #         ("human", "{input}"),
-            #         # Placeholders fill up a **list** of messages
-            #         ("placeholder", "{agent_scratchpad}"),
-            #     ]
-            # )
+                    prompt_1 = ChatPromptTemplate.from_messages(
+                        [
+                            ("system", "You are a helpful assistant"),
+                            ("human", "{input}"),
+                            ("placeholder", "{agent_scratchpad}"),
+                        ]
+                    )
 
-            # agent = create_tool_calling_agent(llm=chat_model, tools=[{"type": "web_search_preview"}], prompt=prompt_1)
-            # agent_executor = AgentExecutor(agent=agent, tools=[{"type": "web_search_preview"}], verbose=True)
-            # response = agent_executor.invoke({"input": input_prompt_text})
-            # return response["output"]
-
-        elif input_tool1 == "brave_jina":
-            tools = [
-                Tool(
-                    name="scrape_webpage_content",
-                    func=scrape_webpage_content,
-                    description="Use this tool to scrape content from a webpage. Input should be the URL of the web page that you want to scrape. Output is the content of the page."
-                ),
-                Tool(
-                    name="search_internet",
-                    func=search_internet,
-                    description="Use this tool to search the internet. Input should be the search query. Output is a list of search results (Webpage titles and URLs) based on the query. Usually this is followed by a tool_call for scrape_webpage_content."
-                )
-            ]
-
-            prompt_1 = ChatPromptTemplate.from_messages(
-                [
-                    ("system", "You are a helpful assistant"),
-                    ("human", "{input}"),
-                    # Placeholders fill up a **list** of messages
-                    ("placeholder", "{agent_scratchpad}"),
-                ]
-            )
-
-            agent = create_tool_calling_agent(llm=chat_model, tools=tools, prompt=prompt_1)
-            agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
-            response = agent_executor.invoke({"input": input_prompt_text})
-            print("OUT111: ", response["output"])
-            return response["output"]
-    else:
-        chain = prompt_template | chat_model
-        response = chain.invoke(invoke_params)
-        print("RES111: ", response)
-        return response
+                    agent = create_tool_calling_agent(llm=chat_model, tools=tools, prompt=prompt_1)
+                    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+                    response = agent_executor.invoke({"input": input_prompt_text})
+                    print("PIE_AGENT_RESPONSE: ", response["output"])
+                    return response["output"]
+            else:
+                chain = prompt_template | chat_model
+                response = chain.invoke(invoke_params)
+                print("PIE_COMPLETION_RESPONSE: ", response)
+                return response
+        except LangChainException as e:
+            if attempt < max_retries - 1:
+                print(f"Rate limit exceeded. Retrying in {retry_delay} seconds... (Attempt {attempt + 1}/{max_retries})")
+                time.sleep(retry_delay)
+                retry_delay *= backoff_factor  # Increase delay for next retry
+            else:
+                print("Max retries reached. Unable to complete the request.")
+                return {"error": "Rate limit exceeded. Please try again later."}
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+            return {"error": str(e)}           
 
 async def send_post_callback_v1(response_content: str, i_tokens: int, o_tokens: int, o_r_tokens: int, request_data: PieRequest) -> dict:
     print("Sending post request (step=", request_data.step_id,") to Synsona Bubble App")
@@ -339,49 +309,6 @@ async def process_request_async_v1(request_data: PieRequest) -> dict:
         normalized_response = response
 
     await send_post_callback_v1(normalized_response, input_tokens, output_tokens, -1, request_data)
-
-    # Use the mappings to determine the action based on bpstep_id
-    # bpstep = BPSTEP_MAPPINGS.get(request_data.bpstep_id)
-
-    # if bpstep == "Company triggers":
-    #     print("bpstep_id is 'Company triggers' 1742963840776x872202725975654400")
-
-    #     response = await asyncio.to_thread(run_bpstep_Triggers, request_data, TRIGGERS_TGT_CISO_1)
-
-    #     # Extract values from usage_metadata
-    #     input_tokens = response.usage_metadata['input_tokens']
-    #     output_tokens = response.usage_metadata['output_tokens']
-    #     # output_reasoning_tokens = response.usage_metadata['output_reasoning_tokens']
-
-    #     await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
-    
-    # elif bpstep == "Industry triggers":
-    #     print("bpstep_id is 'Industry triggers' 1743642197570x161409188642422800")
-
-    #     response = await asyncio.to_thread(run_bpstep_Triggers, request_data, TRIGGERS_IND_CISO_1)
-
-    #     # Extract values from usage_metadata
-    #     input_tokens = response.usage_metadata['input_tokens']
-    #     output_tokens = response.usage_metadata['output_tokens']
-    #     # output_reasoning_tokens = response.usage_metadata['output_reasoning_tokens']
-
-    #     await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
-
-    # elif bpstep == "Angles persona 1":
-    #     print("bpstep_id is Angles persona 1 - 1743007240371x889852377243582500")
-    #     response = await asyncio.to_thread(run_bpstep_Angles1, request_data)
-
-    #     # Extract values from usage_metadata
-    #     input_tokens = response.usage_metadata['input_tokens']
-    #     output_tokens = response.usage_metadata['output_tokens']
-    #     # output_reasoning_tokens = response.usage_metadata['output_reasoning_tokens']
-
-    #     await send_post_callback_v1(response.content, input_tokens, output_tokens, -1, request_data)
-
-    # elif request_data.bpstep_id:
-        
-    # else:
-    #     print("bpstep_id was empty")
 
     return
 
