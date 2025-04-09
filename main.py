@@ -164,7 +164,7 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
             model=input_model_name,  # Specify the model name
             temperature=input_model_temp,
             top_p=input_model_top_p,
-            model_kwargs=model_kwargs,  # Pass model kwargs
+            # model_kwargs=model_kwargs,  # Pass model kwargs
         )
     elif input_model_name in ["sonar", "sonar-pro", "sonar-deep-research"]:
         print("Using Sonar model: ", input_model_name)
@@ -172,14 +172,14 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
             model=input_model_name,
             temperature=input_model_temp,
             top_p=input_model_top_p,
-            model_kwargs=model_kwargs,  # Pass model kwargs
+            # model_kwargs=model_kwargs,  # Pass model kwargs
         )
     elif input_model_name in ["o3-mini", "o3"]:
         print("Using OpenAI reasoning model: ", input_model_name)
         chat_model = ChatOpenAI(
             model=input_model_name,
-            temperature=input_model_temp,
-            top_p=input_model_top_p,
+            # temperature=input_model_temp,
+            # top_p=input_model_top_p,
             reasoning_effort="medium"
         )
     elif input_model_name in [
@@ -192,7 +192,7 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
             model=input_model_name,
             temperature=input_model_temp,
             top_p=input_model_top_p,
-            model_kwargs=model_kwargs,  # Pass model kwargs
+            # model_kwargs=model_kwargs,  # Pass model kwargs
         )
     elif input_model_name in [
         "claude-3-5-haiku-latest",
@@ -205,7 +205,7 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
             model=input_model_name,
             temperature=input_model_temp,
             top_p=input_model_top_p,
-            model_kwargs=model_kwargs,  # Pass model kwargs
+            # model_kwargs=model_kwargs,  # Pass model kwargs
         )
     else:
         print("ERROR: Unknown model name. Please provide a valid model.")
