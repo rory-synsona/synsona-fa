@@ -242,21 +242,27 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
                     agent = create_tool_calling_agent(llm=chat_model, tools=tools, prompt=prompt_1)
                     agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
                     response = agent_executor.invoke({"input": input_prompt_text})
+                    if isinstance(response, dict) and "error" in response:
+                        print(f"PIE_AGENT_ERROR: {response['error']}. Retrying... (Attempt {attempt + 1}/{max_retries})")
+                        raise LangChainException(response["error"])
                     print("PIE_AGENT_RESPONSE: ", response["output"])
                     return response["output"]
             else:
                 chain = prompt_template | chat_model
                 response = chain.invoke(invoke_params)
+                if isinstance(response, dict) and "error" in response:
+                    print(f"PIE_COMPLETION_ERROR: {response['error']}. Retrying... (Attempt {attempt + 1}/{max_retries})")
+                    raise LangChainException(response["error"])
                 print("PIE_COMPLETION_RESPONSE: ", response)
                 return response
         except LangChainException as e:
             if attempt < max_retries - 1:
-                print(f"Rate limit exceeded. Retrying in {retry_delay} seconds... (Attempt {attempt + 1}/{max_retries})")
+                print(f"Rate limit or error detected. Retrying in {retry_delay} seconds... (Attempt {attempt + 1}/{max_retries})")
                 time.sleep(retry_delay)
                 retry_delay *= backoff_factor  # Increase delay for next retry
             else:
                 print("Max retries reached. Unable to complete the request.")
-                return {"error": "Rate limit exceeded. Please try again later."}
+                return {"error": "Rate limit exceeded or error detected. Please try again later."}
         except Exception as e:
             print(f"Unexpected error: {e}")
             return {"error": str(e)}           
