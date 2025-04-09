@@ -189,7 +189,7 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
     ]:
         print("Using Google model: ", input_model_name)     
         chat_model = ChatGoogleGenerativeAI(
-            model=input_model_name
+            model=input_model_name,
             temperature=input_model_temp,
             top_p=input_model_top_p,
             model_kwargs=model_kwargs,  # Pass model kwargs
