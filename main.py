@@ -164,11 +164,16 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
 
     prompt_template = ChatPromptTemplate.from_messages(messages)
 
-    max_retries = 5  # Maximum number of retries
+    max_retries = 20  # Maximum number of retries
     backoff_factor = 2  # Exponential backoff factor
-    retry_delay = 10  # Initial delay in seconds
+
+    if input_model_name == "sonar-deep-research":
+        retry_delay = 60  # Initial delay in seconds (max 5 RPM)
+    else:
+        retry_delay = 10  # Initial delay in seconds
 
     for attempt in range(max_retries):
+        print("Top of for loop: max_retries=", max_retries, " attempt=", attempt, " retry_delay=", retry_delay)
         try:
             if input_tool1:
                 print("running input_tool1: ", input_tool1)
