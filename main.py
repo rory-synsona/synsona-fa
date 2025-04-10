@@ -203,7 +203,7 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
                     if isinstance(response, dict) and response.get("response_content", {}).get("error"):
                         error_message = response["response_content"]["error"]
                         print(f"PIE_AGENT_ERROR: {error_message}. Retrying... (Attempt {attempt + 1}/{max_retries})")
-                        raise LangChainException(error_message)
+                        raise Exception(error_message)
                     else:
                         print("PIE_AGENT_RESPONSE: ", response["output"])
                         return response["output"]
@@ -213,21 +213,19 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
                 if isinstance(response, dict) and response.get("response_content", {}).get("error"):
                     error_message = response["response_content"]["error"]
                     print(f"PIE_COMPLETION_ERROR: {error_message}. Retrying... (Attempt {attempt + 1}/{max_retries})")
-                    raise LangChainException(error_message)
+                    raise Exception(error_message)
                 else:
                     print("PIE_COMPLETION_RESPONSE: ", response)
                     return response
-        except LangChainException as e:
+        except Exception as e:
+            print("Rory Exception: ", e)
             if attempt < max_retries - 1:
                 print(f"Rate limit or error detected. Retrying in {retry_delay} seconds... (Attempt {attempt + 1}/{max_retries})")
                 time.sleep(retry_delay)
                 retry_delay *= backoff_factor  # Increase delay for next retry
             else:
                 print("Max retries reached. Unable to complete the request.")
-                return {"error": "Rate limit exceeded or error detected. Please try again later."}
-        except Exception as e:
-            print(f"Unexpected error: {e}")
-            return {"error": str(e)}           
+                return {"error": "Rate limit exceeded or error detected. Please try again later."} 
 
 async def send_post_callback_v1(response_content: str, i_tokens: int, o_tokens: int, o_r_tokens: int, request_data: PieRequest) -> dict:
     print("Sending post request (step=", request_data.step_id,") to Synsona Bubble App")
