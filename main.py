@@ -249,7 +249,8 @@ async def send_post_callback_v1(response_content: str, i_tokens: int, o_tokens: 
     }
     headers = {"Content-Type": "application/json"}
     
-    async with httpx.AsyncClient() as client:
+    timeout = httpx.Timeout(10.0)  # seconds
+    async with httpx.AsyncClient(timeout=timeout) as client:
         response = await client.post(bubble_app_url, json=payload, headers=headers)
         response.raise_for_status()
         print("Payload: ", payload)
