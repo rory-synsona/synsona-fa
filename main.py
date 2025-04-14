@@ -92,9 +92,9 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
     input_model_name = input_json_dict.get("model_name")
     input_model_temp = input_json_dict.get("model_temp")
     input_model_top_p = input_json_dict.get("model_top_p")
-
+    input_bubble_test = input_json_dict.get("bubble_test", False)  # Default to False if not provided
     input_tool1 = input_json_dict.get("tool1")
-
+    
     print("run_bpstep_Triggers: ", input_json_dict)
 
     # Prepare model kwargs
@@ -103,7 +103,7 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
         "temperature": input_model_temp, 
     }
 
-    if input_model_name in ["gpt-4o-mini", "gpt-4o"]:
+    if input_model_name in ["gpt-4o-mini", "gpt-4o", "gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano"]:
         print("Using OpenAI model: ", input_model_name)
         chat_model = ChatOpenAI(
             model=input_model_name,  # Specify the model name
@@ -164,13 +164,13 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
 
     prompt_template = ChatPromptTemplate.from_messages(messages)
 
-    max_retries = 20  # Maximum number of retries
-    backoff_factor = 2  # Exponential backoff factor
-
+    max_retries = 20  # Reduced number of retries since we're waiting longer
+    
     if input_model_name == "sonar-deep-research":
-        retry_delay = 60  # Initial delay in seconds (max 5 RPM)
+        retry_delay = 60  # 60 seconds for 5 requests/minute rate limit
     else:
-        retry_delay = 10  # Initial delay in seconds
+        retry_delay = 10  # Initial delay in seconds for other models
+        backoff_factor = 2  # Exponential backoff factor for other models
 
     for attempt in range(max_retries):
         print("Top of for loop: max_retries=", max_retries, " attempt=", attempt, " retry_delay=", retry_delay)
@@ -211,6 +211,7 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
                         raise Exception(error_message)
                     else:
                         print("PIE_AGENT_RESPONSE: ", response["output"])
+                        attempt = 1 # reset attempt since this succeeded
                         return response["output"]
             else:
                 chain = prompt_template | chat_model
@@ -225,16 +226,23 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
         except Exception as e:
             print("Rory Exception: ", e)
             if attempt < max_retries - 1:
-                print(f"Rate limit or error detected. Retrying in {retry_delay} seconds... (Attempt {attempt + 1}/{max_retries})")
-                time.sleep(retry_delay)
-                retry_delay *= backoff_factor  # Increase delay for next retry
+                if input_model_name == "sonar-deep-research":
+                    print(f"Rate limit detected for sonar-deep-research. Waiting 65 seconds before retry... (Attempt {attempt + 1}/{max_retries})")
+                    time.sleep(retry_delay)
+                else:
+                    print(f"Rate limit or error detected. Retrying in {retry_delay} seconds... (Attempt {attempt + 1}/{max_retries})")
+                    time.sleep(retry_delay)
+                    retry_delay *= backoff_factor  # Increase delay only for non-sonar-deep-research models
             else:
                 print("Max retries reached. Unable to complete the request.")
                 return {"error": "Rate limit exceeded or error detected. Please try again later."} 
 
 async def send_post_callback_v1(response_content: str, i_tokens: int, o_tokens: int, o_r_tokens: int, request_data: PieRequest) -> dict:
-    print("Sending post request (step=", request_data.step_id,") to Synsona Bubble App")
-    bubble_app_url = os.getenv("SYNSONA_BUBBLE_URL_TEST")
+    # Use test URL if bubble_test is True, otherwise use live URL
+    bubble_app_url = os.getenv("SYNSONA_BUBBLE_URL_TEST") if request_data.input_json.get("bubble_test") else os.getenv("SYNSONA_BUBBLE_URL_LIVE")
+    
+    print("Sending post request (step=", request_data.step_id,", app=", bubble_app_url)
+    
     payload = {
         "response_content": response_content,
         "customer_id": request_data.customer_id,
