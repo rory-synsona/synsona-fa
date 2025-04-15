@@ -240,9 +240,9 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
 async def send_post_callback_v1(response_content: str, i_tokens: int, o_tokens: int, o_r_tokens: int, request_data: PieRequest) -> dict:
     # Use test URL if bubble_test is True, otherwise use live URL
     bubble_app_url = os.getenv("SYNSONA_BUBBLE_URL_TEST") if request_data.input_json.get("bubble_test") else os.getenv("SYNSONA_BUBBLE_URL_LIVE")
-    
-    print("Sending post request (step=", request_data.step_id,", app=", bubble_app_url)
-    
+
+    print("Sending post request (step=", request_data.step_id, ", app=", bubble_app_url)
+
     payload = {
         "response_content": response_content,
         "customer_id": request_data.customer_id,
@@ -256,13 +256,28 @@ async def send_post_callback_v1(response_content: str, i_tokens: int, o_tokens: 
         "o_r_tokens": o_r_tokens,
     }
     headers = {"Content-Type": "application/json"}
-    
-    timeout = httpx.Timeout(10.0)  # seconds
-    async with httpx.AsyncClient(timeout=timeout) as client:
-        response = await client.post(bubble_app_url, json=payload, headers=headers)
-        response.raise_for_status()
-        print("Payload: ", payload)
-    return
+
+    timeout = httpx.Timeout(30.0)  # seconds
+    max_retries = 10
+
+    for attempt in range(max_retries):
+        try:
+            async with httpx.AsyncClient(timeout=timeout) as client:
+                response = await client.post(bubble_app_url, json=payload, headers=headers)
+                response.raise_for_status()
+                print("Payload: ", payload)
+                return
+        except httpx.ConnectTimeout:
+            print(f"ConnectTimeout: Unable to reach {bubble_app_url}. Retrying... (Attempt {attempt + 1}/{max_retries})")
+        except httpx.HTTPStatusError as e:
+            print(f"HTTPStatusError: {e.response.status_code} - {e.response.text}")
+            break
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+            break
+
+    print("Max retries reached. Unable to send POST request.")
+    return {"error": "Failed to send POST request after retries."}
 
 async def process_request_async_v1(request_data: PieRequest) -> dict:
     print("Starting process_request_async")
