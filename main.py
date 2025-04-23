@@ -257,8 +257,8 @@ async def send_post_callback_v1(response_content: str, i_tokens: int, o_tokens: 
     }
     headers = {"Content-Type": "application/json"}
 
-    timeout = httpx.Timeout(30.0)  # seconds
-    max_retries = 10
+    timeout = httpx.Timeout(60.0)  # seconds
+    max_retries = 30
 
     for attempt in range(max_retries):
         try:
