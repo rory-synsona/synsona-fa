@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monster IT - Your IT Solutions Partner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .hero-bg {
+            background-image: url('https://images.unsplash.com/photo-1571786256017-aee7a0c009b6?q=80&w=2680&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            background-size: cover;
+            background-position: center;
+        }
+        .header-icon {
+            width: 24px;
+            height: 24px;
+            stroke-width: 1.5;
+            fill: none;
+            stroke: currentColor;
+        }
+        .service-icon {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 1rem;
+        }
+        .client-logo-sm { /* For smaller logos like Canadian Tire in title */
+            height: 32px; 
+            width: auto;
+            /* SVGs don't need explicit border-radius or background for this design if they are well-formed */
+            flex-shrink: 0; 
+        }
+        .client-logo-lg { /* For larger logos like Home Depot teaser */
+            height: 50px; 
+            width: auto;
+            border-radius: 5px; 
+        }
+        .canadian-tire-blue { /* Specific color for Canadian Tire text */
+            color: #DA291C; /* Official Canadian Tire Red for "for Canadian Tire" part, as per SVG logo */
+        }
+        .hero-title-text { /* Class for the hero title text */
+            font-size: 2.25rem; /* Corresponds to text-4xl */
+            line-height: 2.5rem; /* Corresponds to text-4xl */
+        }
+        @media (min-width: 640px) { /* sm breakpoint */
+            .hero-title-text {
+                font-size: 3rem; /* Corresponds to sm:text-5xl */
+                line-height: 1; 
+            }
+            .client-logo-sm {
+                height: 40px; 
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <header class="sticky top-0 z-50">
+        <div class="bg-white shadow-md">
+            <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center">
+                    <img src="https://aa665a24cf8c657052d7df0577741efb.cdn.bubble.io/f1746806413212x661199132529914900/monster.png?_gl=1*12shhhj*_gcl_aw*R0NMLjE3NDE5NTkyMjkuQ2p3S0NBandwOC0tQmhCUkVpd0FqN29nMTdmOTVtaWhLRFFKTFJkUl9Qa0hvZnNGSWl5WUdHekpxOTRtSHJLYS1STXJidk02U0twM1JCb0NLSndRQXZEX0J3RQ..*_gcl_au*ODM2NDUwMDczLjE3MzkyNDYzMjA.*_ga*Nzc0NDAyODQ3LjE3MzkyNDYyOTY.*_ga_BFPVR2DEE2*czE3NDY4MDA1ODMkbzgzJGcxJHQxNzQ2ODE3MjMwJGozNSRsMCRoMA.." alt="Monster IT Logo" class="h-10 w-auto mr-3 rounded-[5px]" onerror="this.onerror=null;this.src='https://placehold.co/100x40/000000/FFFFFF?text=Monster+IT';this.classList.add('rounded-[5px]');">
+                    <span class="text-2xl font-bold text-slate-800 hidden sm:inline">Monster IT</span>
+                </div>
+
+                <div class="flex-grow max-w-xl mx-4 hidden md:flex items-center border border-gray-300 rounded-lg overflow-hidden">
+                    <input type="text" placeholder="What can we help you find today?" class="w-full px-4 py-2 text-gray-700 focus:outline-none">
+                    <button class="px-4 text-gray-500">
+                        <svg class="w-5 h-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <a href="#" class="text-gray-600 hover:text-[#1B77B7] flex items-center space-x-1">
+                        <svg class="header-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                        </svg>
+                        <span class="hidden lg:inline">Notifications</span>
+                    </a>
+                    <a href="#" class="text-gray-600 hover:text-[#1B77B7] flex items-center space-x-1">
+                        <svg class="header-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                        </svg>
+                        <span class="hidden lg:inline">Sign In</span>
+                    </a>
+                    <a href="#" class="text-gray-600 hover:text-[#1B77B7] flex items-center space-x-1">
+                         <svg class="header-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.004 9.004 0 013 12c0-1.615.422-3.11 1.157-4.418" />
+                        </svg>
+                        <span class="hidden lg:inline">Eng</span>
+                    </a>
+                    <a href="#" class="text-gray-600 hover:text-[#1B77B7] flex items-center space-x-1">
+                        <svg class="header-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+                        </svg>
+                        <span class="hidden lg:inline">Cart</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <nav class="bg-slate-800/60 backdrop-blur-md text-white">
+            <div class="container mx-auto px-4">
+                <ul class="flex items-center justify-center sm:justify-start space-x-6 py-3 text-sm font-medium">
+                    <li><a href="#" class="hover:text-[#63b3ed] py-2 block">Hardware</a></li>
+                    <li><a href="#" class="hover:text-[#63b3ed] py-2 block">Software</a></li>
+                    <li><a href="#" class="hover:text-[#63b3ed] py-2 block">Services</a></li>
+                    <li><a href="#" class="text-[#63b3ed] border-b-2 border-[#63b3ed] py-2 block">IT Solutions</a></li>
+                    <li><a href="#" class="hover:text-[#63b3ed] py-2 block">Brands</a></li>
+                    <li><a href="#" class="hover:text-[#63b3ed] py-2 block">Research Hub</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="-mt-11"> 
+        <section class="hero-bg text-white relative">
+            <div class="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent"></div>
+            <div class="container mx-auto px-4 pt-36 pb-20 sm:pb-28 md:pb-36 relative z-10">
+                <div class="max-w-2xl">
+                    <p class="text-sm font-semibold uppercase tracking-wider mb-2 text-gray-300">SOLUTIONS & SERVICES</p>
+                    
+                    <div class="flex items-center mb-4">
+                        <img src="https://media-www.canadiantire.ca/logo/ct-brandmark-standard-primary-rgw-pos-hex-5f6ce5ad-aadc-44da-9d55-a06d4c6273bb.svg" alt="Canadian Tire Logo" class="client-logo-sm mr-3" onerror="this.onerror=null;this.src='https://placehold.co/60x40/FFFFFF/CCCCCC?text=CT';this.classList.add('rounded-[5px]');">
+                        <h1 class="hero-title-text font-bold whitespace-nowrap">IT Solutions <span class="canadian-tire-blue font-bold">for Canadian Tire</span></h1>
+                    </div>
+
+                    <p class="text-lg sm:text-xl mb-6 text-gray-200">
+                        Let Monster IT propel your "True North" strategy - We'll fortify your omnichannel expansion plans, help you sharpen your approach to data analytics and support your AI-driven personalization innovations with Triangle Rewards.
+                    </p>
+
+                    <div class="mb-8"> 
+                        <p class="text-lg sm:text-xl text-gray-200 mb-2">Learn about how we helped <strong class="font-semibold">Home Depot</strong> with their 2025 digital refresh</p>
+                        <img src="https://brandpalettes.com/wp-content/uploads/2019/02/Home-Depot-Logo.png" alt="Home Depot Logo" class="client-logo-lg border border-gray-400 rounded-[5px]" onerror="this.onerror=null;this.src='https://placehold.co/120x50/CCCCCC/FFFFFF?text=HD';this.classList.add('rounded-[5px]', 'border', 'border-gray-400');">
+                    </div>
+                    
+                    <a href="#" class="bg-[#1B77B7] hover:bg-[#145f9a] text-white font-semibold py-3 px-8 rounded-lg text-lg transition duration-300 ease-in-out transform hover:scale-105 inline-block">
+                        Contact an Expert
+                    </a>
+
+                </div>
+            </div>
+        </section>
+
+        <section class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-gray-50 p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col items-center text-center">
+                        <svg class="service-icon text-[#1B77B7]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z" />
+                        </svg>
+                        <h3 class="text-2xl font-semibold text-slate-800 mb-3">Cloud Native</h3>
+                        <p class="text-gray-600 mb-6 leading-relaxed">
+                            Our team of cloud native experts will help you
+                            build a cohesive cloud native strategy to drive
+                            business value and extend your lead over the
+                            competition.
+                        </p>
+                        <a href="#" class="text-[#1B77B7] hover:text-[#145f9a] font-medium group">
+                            Explore all Cloud Native
+                            <span class="ml-1 transition-transform duration-300 inline-block group-hover:translate-x-1">&rarr;</span>
+                        </a>
+                    </div>
+
+                    <div class="bg-gray-50 p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col items-center text-center">
+                        <svg class="service-icon text-[#1B77B7]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                        </svg>
+                        <h3 class="text-2xl font-semibold text-slate-800 mb-3">Cybersecurity</h3>
+                        <p class="text-gray-600 mb-6 leading-relaxed">
+                            Our cybersecurity experts can help your
+                            organization prepare for security threats,
+                            defend your critical business assets and
+                            respond rapidly to security incidents.
+                        </p>
+                        <a href="#" class="text-[#1B77B7] hover:text-[#145f9a] font-medium group">
+                            Explore all Cybersecurity
+                            <span class="ml-1 transition-transform duration-300 inline-block group-hover:translate-x-1">&rarr;</span>
+                        </a>
+                    </div>
+
+                    <div class="bg-gray-50 p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col items-center text-center">
+                         <svg class="service-icon text-[#1B77B7]" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"><path d="M39 28v4h-8v-4a4 4 0 0 1 8 0m-13 4h18v12H26zm6-26h6a4 4 0 0 1 4 4v6M16 42h-6a4 4 0 0 1-4-4v-6M22 8v12c0 2.21-4.03 4-9 4s-9-1.79-9-4V8"/><path d="M22 14c0 2.21-4.03 4-9 4s-9-1.79-9-4m18-6c0 2.21-4.03 4-9 4s-9-1.79-9-4s4.03-4 9-4s9 1.79 9 4"/></g></svg>
+                        <h3 class="text-2xl font-semibold text-slate-800 mb-3">Data Centre & Hybrid Infrastructure</h3>
+                        <p class="text-gray-600 mb-6 leading-relaxed">
+                            Our experts help organizations build IT
+                            environments that are agile, manageable and
+                            future-focused while keeping operations
+                            running smoothly and costs down.
+                        </p>
+                        <a href="#" class="text-[#1B77B7] hover:text-[#145f9a] font-medium group">
+                            Explore all Data Centre & Hybrid Infrastructure
+                            <span class="ml-1 transition-transform duration-300 inline-block group-hover:translate-x-1">&rarr;</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-900 text-gray-400 py-12">
+        <div class="container mx-auto px-4 text-center">
+            <div class="mb-4">
+                 <img src="https://aa665a24cf8c657052d7df0577741efb.cdn.bubble.io/f1746806413212x661199132529914900/monster.png?_gl=1*12shhhj*_gcl_aw*R0NMLjE3NDE5NTkyMjkuQ2p3S0NBandwOC0tQmhCUkVpd0FqN29nMTdmOTVtaWhLRFFKTFJkUl9Qa0hvZnNGSWl5WUdHekpxOTRtSHJLYS1STXJidk02U0twM1JCb0NLSndRQXZEX0J3RQ..*_gcl_au*ODM2NDUwMDczLjE3MzkyNDYzMjA.*_ga*Nzc0NDAyODQ3LjE3MzkyNDYyOTY.*_ga_BFPVR2DEE2*czE3NDY4MDA1ODMkbzgzJGcxJHQxNzQ2ODE3MjMwJGozNSRsMCRoMA.." alt="Monster IT Logo" class="h-12 w-auto mx-auto mb-2 rounded-[5px]" onerror="this.onerror=null;this.src='https://placehold.co/120x50/FFFFFF/000000?text=Monster+IT+Footer'; this.classList.add('rounded-[5px]');">
+                <p class="text-lg font-semibold">Monster IT</p>
+            </div>
+            <p class="text-sm">&copy; <script>document.write(new Date().getFullYear())</script> Monster IT. All rights reserved.</p>
+            <p class="text-xs mt-2">Your trusted partner for monstrously good IT solutions.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

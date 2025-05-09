@@ -95,7 +95,7 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
     input_bubble_test = input_json_dict.get("bubble_test", False)  # Default to False if not provided
     input_tool1 = input_json_dict.get("tool1")
     
-    print("run_bpstep_Triggers: ", input_json_dict)
+    print("run_bpstep_generic: ", input_json_dict)
 
     # Prepare model kwargs
     model_kwargs = {
@@ -241,7 +241,7 @@ async def send_post_callback_v1(response_content: str, i_tokens: int, o_tokens: 
     # Use test URL if bubble_test is True, otherwise use live URL
     bubble_app_url = os.getenv("SYNSONA_BUBBLE_URL_TEST") if request_data.input_json.get("bubble_test") else os.getenv("SYNSONA_BUBBLE_URL_LIVE")
 
-    print("Sending post request (step=", request_data.step_id, ", app=", bubble_app_url)
+    print("Attempting to send post request (step=", request_data.step_id, ", app=", bubble_app_url)
 
     payload = {
         "response_content": response_content,
@@ -265,10 +265,10 @@ async def send_post_callback_v1(response_content: str, i_tokens: int, o_tokens: 
             async with httpx.AsyncClient(timeout=timeout) as client:
                 response = await client.post(bubble_app_url, json=payload, headers=headers)
                 response.raise_for_status()
-                print("Payload: ", payload)
+                print("POST to bubble successful (", request_data.step_id, ") - Payload: ", payload)
                 return
         except httpx.ConnectTimeout:
-            print(f"ConnectTimeout: Unable to reach {bubble_app_url}. Retrying... (Attempt {attempt + 1}/{max_retries})")
+            print(f"ConnectTimeout ({request_data.step_id}): Unable to reach {bubble_app_url}. Retrying... (Attempt {attempt + 1}/{max_retries})")
         except httpx.HTTPStatusError as e:
             print(f"HTTPStatusError: {e.response.status_code} - {e.response.text}")
             break
