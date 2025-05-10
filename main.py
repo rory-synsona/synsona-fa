@@ -1,5 +1,7 @@
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 import httpx
 import os
@@ -33,6 +35,9 @@ load_dotenv()
 
 # Start server
 app = FastAPI()
+
+# Mount static files from public directory only
+app.mount("/", StaticFiles(directory="public", html=True), name="public")
 
 # Enable CORS
 app.add_middleware(
