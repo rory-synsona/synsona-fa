@@ -36,9 +36,6 @@ load_dotenv()
 # Start server
 app = FastAPI()
 
-# Mount static files from public directory only
-app.mount("/", StaticFiles(directory="public", html=True), name="public")
-
 # Enable CORS
 app.add_middleware(
     CORSMiddleware,
@@ -56,6 +53,30 @@ class PieRequest(BaseModel):
     wf_id: str
     step_id: str
     input_json: dict
+
+# Define API endpoint first
+@app.post("/pie/v1/")
+async def pie_v1(request_data: PieRequest, http_request: Request):
+    auth_header = http_request.headers.get("Authorization")
+    
+    if (auth_header is None or not auth_header.startswith("Bearer ")):
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    
+    token = auth_header.split(" ")[1]
+
+    if token == "syn-e5f3a7d6c9b4f2a1c9d9e7b6a3f1b2c4":
+        if request_data.bpstep_id:
+            print("Headers: ", http_request.headers)
+            print("Client: ", http_request.client.host)
+            response = process_request(request_data)
+            return response
+        else:
+            raise HTTPException(status_code=404, detail="File not found")
+    else:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+# Mount static files to /static path (after API endpoint definition)
+app.mount("/static", StaticFiles(directory="public", html=True), name="public")
 
 # Tool to scrape a website
 def scrape_webpage_content(url: str) -> str:
@@ -316,23 +337,3 @@ def process_request(request_data: PieRequest) -> dict:
     print("Starting process_request")
     asyncio.create_task(process_request_async_v1(request_data))
     return {"reciept_confirmed": request_data.step_id}
-
-@app.post("/pie/v1/")
-async def pie_v1(request_data: PieRequest, http_request: Request):
-    auth_header = http_request.headers.get("Authorization")
-    
-    if (auth_header is None or not auth_header.startswith("Bearer ")):
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    
-    token = auth_header.split(" ")[1]
-
-    if token == "syn-e5f3a7d6c9b4f2a1c9d9e7b6a3f1b2c4":
-        if request_data.bpstep_id:
-            print("Headers: ", http_request.headers)
-            print("Client: ", http_request.client.host)
-            response = process_request(request_data)
-            return response
-        else:
-            raise HTTPException(status_code=404, detail="File not found")
-    else:
-        raise HTTPException(status_code=401, detail="Unauthorized")
