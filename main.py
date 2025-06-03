@@ -236,16 +236,33 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
             else:
                 chain = prompt_template | chat_model
                 response = chain.invoke(invoke_params)
-                if isinstance(response, dict) and response.get("response_content", {}).get("error"):
-                    error_message = response["response_content"]["error"]
-                    print(f"PIE_COMPLETION_ERROR: {error_message}")
-                    raise Exception(error_message)
+                print("PIE_COMPLETION_RESPONSE raw: ", response)
+                print("Response type:", type(response))
+                print("Response attributes:", dir(response))
+                
+                # Extract response details based on type
+                if isinstance(response, dict):
+                    result = {
+                        "content": str(response.get("text", response.get("content", ""))),
+                        "citations": response.get("citations", []),
+                        "search_results": response.get("search_results", [])
+                    }
+                    print("Extracted dict result:", result)
+                    return result
+                elif hasattr(response, 'additional_kwargs'):  # Handle ChatPerplexity response
+                    content = str(response.content)
+                    citations = response.additional_kwargs.get('citations', [])
+                    search_results = response.additional_kwargs.get('search_results', [])
+                    result = {
+                        "content": content,
+                        "citations": citations,
+                        "search_results": search_results
+                    }
+                    print("Extracted Perplexity result:", result)
+                    return result
                 else:
-                    print("PIE_COMPLETION_RESPONSE: ", response)
-                    if hasattr(response, 'content'):
-                        return {"content": str(response.content)}
-                    elif isinstance(response, (str, dict)):
-                        return {"content": str(response)}
+                    print("Fallback: converting response to string")
+                    return {"content": str(response)}
         except Exception as e:
             print(f"Error: {str(e)}")
             if attempt < max_retries - 1:
@@ -311,45 +328,55 @@ async def process_request_async_v1(request_data: PieRequest) -> dict:
 
     print("bpstep_id is generic: ", request_data.bpstep_id)
     response = await asyncio.to_thread(run_bpstep_generic, request_data)
+    print("Raw response from model:", response)
     
     # Normalize the output content
     if isinstance(response, dict):
-        print("res dict: ", response)
+        print("Response is dict with keys:", response.keys())
         content = response.get("content", "")
         
         # Handle citations if they exist
         citations = response.get("citations", [])
         if citations:
+            print("Found citations:", citations)
             content = f"{content}\n<citations>{chr(10)}{chr(10).join(citations)}</citations>"
             
         # Handle search results if they exist
         search_results = response.get("search_results", [])
         if search_results:
+            print("Found search_results:", search_results)
             results_str = json.dumps(search_results, indent=2)
             content = f"{content}\n<search_results>{chr(10)}{results_str}</search_results>"
-            
+        
+        print("Final normalized content:", content)    
         normalized_response = str(content)
         usage = response.get("usage_metadata", {})
         input_tokens = usage.get("input_tokens", 0)
         output_tokens = usage.get("output_tokens", 0)
     elif hasattr(response, 'content'):
+        print("Response is object with content attribute")
         content = response.content
         
         # Check if the response object has citations
         citations = getattr(response, 'citations', [])
         if citations:
+            print("Found citations from object:", citations)
             content = f"{content}\n<citations>{chr(10)}{chr(10).join(citations)}</citations>"
             
         # Check if the response object has search results
         search_results = getattr(response, 'search_results', [])
         if search_results:
+            print("Found search_results from object:", search_results)
             results_str = json.dumps(search_results, indent=2)
             content = f"{content}\n<search_results>{chr(10)}{results_str}</search_results>"
             
+        print("Final normalized content from object:", content)
         normalized_response = str(content)
     else:
+        print("Response is neither dict nor has content attribute")
         normalized_response = str(response)
 
+    print("Final response being sent to callback:", normalized_response)
     await send_post_callback_v1(normalized_response, input_tokens, output_tokens, -1, request_data)
 
     return {"status": "success", "step_id": request_data.step_id}
