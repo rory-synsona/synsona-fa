@@ -140,11 +140,20 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
                 top_p=model_kwargs["top_p"]
             )
         elif input_model_name in ["sonar", "sonar-pro", "sonar-deep-research"]:
+            from datetime import datetime, timedelta
+            today = datetime.now()
+            one_year_ago = (today - timedelta(days=365)).strftime('%B 1, %Y')
             print("Using Sonar model: ", input_model_name)
             chat_model = ChatPerplexity(
                 model=input_model_name,
                 temperature=model_kwargs["temperature"],
-                timeout=60
+                timeout=60,
+                model_kwargs={
+                    "web_search_options": {
+                        "search_context_size": "medium",
+                        "search_after_date_filter": one_year_ago
+                    }
+                }
             )
         elif input_model_name in ["o3-mini", "o3"]:
             print("Using OpenAI reasoning model: ", input_model_name)
@@ -302,16 +311,42 @@ async def process_request_async_v1(request_data: PieRequest) -> dict:
 
     print("bpstep_id is generic: ", request_data.bpstep_id)
     response = await asyncio.to_thread(run_bpstep_generic, request_data)
-
+    
     # Normalize the output content
     if isinstance(response, dict):
         print("res dict: ", response)
-        normalized_response = str(response.get("content", ""))
+        content = response.get("content", "")
+        
+        # Handle citations if they exist
+        citations = response.get("citations", [])
+        if citations:
+            content = f"{content}\n<citations>{chr(10)}{chr(10).join(citations)}</citations>"
+            
+        # Handle search results if they exist
+        search_results = response.get("search_results", [])
+        if search_results:
+            results_str = json.dumps(search_results, indent=2)
+            content = f"{content}\n<search_results>{chr(10)}{results_str}</search_results>"
+            
+        normalized_response = str(content)
         usage = response.get("usage_metadata", {})
         input_tokens = usage.get("input_tokens", 0)
         output_tokens = usage.get("output_tokens", 0)
     elif hasattr(response, 'content'):
-        normalized_response = str(response.content)
+        content = response.content
+        
+        # Check if the response object has citations
+        citations = getattr(response, 'citations', [])
+        if citations:
+            content = f"{content}\n<citations>{chr(10)}{chr(10).join(citations)}</citations>"
+            
+        # Check if the response object has search results
+        search_results = getattr(response, 'search_results', [])
+        if search_results:
+            results_str = json.dumps(search_results, indent=2)
+            content = f"{content}\n<search_results>{chr(10)}{results_str}</search_results>"
+            
+        normalized_response = str(content)
     else:
         normalized_response = str(response)
 
