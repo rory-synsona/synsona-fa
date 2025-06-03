@@ -67,7 +67,7 @@ async def pie_v1(request_data: PieRequest, http_request: Request):
     if token == "syn-e5f3a7d6c9b4f2a1c9d9e7b6a3f1b2c4":
         if request_data.bpstep_id:
             print("Headers: ", http_request.headers)
-            print("Client: ", http_request.client.host)
+            print("Client: ", http_request.client.host if http_request.client else "No client info")
             response = process_request(request_data)
             return response
         else:
@@ -111,161 +111,149 @@ def search_internet(query: str) -> str:
         return f"Error: Unable to scrape {request_url}. Status code: {response.status_code}"
 
 def run_bpstep_generic(request_data: PieRequest) -> dict:
-    
     # Get EXPECTED variables from input_json in request
     input_json_dict = request_data.input_json
     input_prompt_text = input_json_dict.get("prompt_text")
     input_model_name = input_json_dict.get("model_name")
     input_model_temp = input_json_dict.get("model_temp")
     input_model_top_p = input_json_dict.get("model_top_p")
-    input_bubble_test = input_json_dict.get("bubble_test", False)  # Default to False if not provided
+    input_bubble_test = input_json_dict.get("bubble_test", False)
     input_tool1 = input_json_dict.get("tool1")
     
     print("run_bpstep_generic: ", input_json_dict)
+    
+    if not input_model_name or not isinstance(input_model_name, str):
+        return {"error": "Model name must be a valid string"}
 
     # Prepare model kwargs
     model_kwargs = {
-        "top_p": input_model_top_p,
-        "temperature": input_model_temp, 
+        "top_p": float(input_model_top_p) if input_model_top_p is not None else 1.0,
+        "temperature": float(input_model_temp) if input_model_temp is not None else 0.7
     }
 
-    if input_model_name in ["gpt-4o-mini", "gpt-4o", "gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano"]:
-        print("Using OpenAI model: ", input_model_name)
-        chat_model = ChatOpenAI(
-            model=input_model_name,  # Specify the model name
-            temperature=input_model_temp,
-            top_p=input_model_top_p,
-        )
-    elif input_model_name in ["sonar", "sonar-pro", "sonar-deep-research"]:
-        print("Using Sonar model: ", input_model_name)
-        chat_model = ChatPerplexity(
-            model=input_model_name,
-            temperature=input_model_temp,
-            top_p=input_model_top_p,
-        )
-    elif input_model_name in ["o3-mini", "o3"]:
-        print("Using OpenAI reasoning model: ", input_model_name)
-        chat_model = ChatOpenAI(
-            model=input_model_name,
-            reasoning_effort="medium"
-        )
-    elif input_model_name in [
-        "gemini-2.0-flash",
-        "gemini-2.0-flash-lite",
-        "gemini-2.5-pro-exp-03-25"
-    ]:
-        print("Using Google model: ", input_model_name)     
-        chat_model = ChatGoogleGenerativeAI(
-            model=input_model_name,
-            temperature=input_model_temp,
-            top_p=input_model_top_p,
-        )
-    elif input_model_name in [
-        "claude-3-5-haiku-latest",
-        "claude-3-5-sonnet-latest",
-        "claude-3-7-sonnet-latest",
-        "claude-3-opus-latest"
-    ]:
-        print("Using Anthropic model: ", input_model_name)
-        chat_model = ChatAnthropic(
-            model=input_model_name,
-            temperature=input_model_temp,
-            top_p=input_model_top_p,
-        )
-    else:
-        print("ERROR: Unknown model name. Please provide a valid model.")
-        return {"error": "Unknown model name. Please provide a valid model."}
+    try:
+        if input_model_name in ["gpt-4o-mini", "gpt-4o", "gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano"]:
+            print("Using OpenAI model: ", input_model_name)
+            chat_model = ChatOpenAI(
+                model=input_model_name,
+                temperature=model_kwargs["temperature"],
+                top_p=model_kwargs["top_p"]
+            )
+        elif input_model_name in ["sonar", "sonar-pro", "sonar-deep-research"]:
+            print("Using Sonar model: ", input_model_name)
+            chat_model = ChatPerplexity(
+                model=input_model_name,
+                temperature=model_kwargs["temperature"],
+                timeout=60
+            )
+        elif input_model_name in ["o3-mini", "o3"]:
+            print("Using OpenAI reasoning model: ", input_model_name)
+            chat_model = ChatOpenAI(
+                model=input_model_name,
+                reasoning_effort="medium"
+            )
+        elif input_model_name in [
+            "gemini-2.0-flash",
+            "gemini-2.0-flash-lite",
+            "gemini-2.5-pro-exp-03-25"
+        ]:
+            print("Using Google model: ", input_model_name)
+            chat_model = ChatGoogleGenerativeAI(
+                model=input_model_name,
+                temperature=model_kwargs["temperature"],
+                top_p=model_kwargs["top_p"]
+            )
+        elif input_model_name in [
+            "claude-3-5-haiku-latest",
+            "claude-3-5-sonnet-latest",
+            "claude-3-7-sonnet-latest",
+            "claude-3-opus-latest"
+        ]:
+            print("Using Anthropic model: ", input_model_name)
+            chat_model = ChatAnthropic(
+                model_name=input_model_name,
+                temperature=model_kwargs["temperature"],
+                timeout=60,
+                stop=None
+            )
+        else:
+            return {"error": "Unknown model name. Please provide a valid model."}
+    except Exception as e:
+        return {"error": f"Error initializing model: {str(e)}"}
 
-    # set messages for the llm
     messages = [
         ("system", "Today's date is {date}"),
         ("human", "{input_prompt_text}")
     ]
-
-    # set parameters for running the llm
     invoke_params = {
         "input_prompt_text": input_prompt_text,
         "date": date.today().isoformat()
     }
-
     prompt_template = ChatPromptTemplate.from_messages(messages)
-
-    max_retries = 20  # Reduced number of retries since we're waiting longer
-    
-    if input_model_name == "sonar-deep-research":
-        retry_delay = 60  # 60 seconds for 5 requests/minute rate limit
-    else:
-        retry_delay = 10  # Initial delay in seconds for other models
-        backoff_factor = 2  # Exponential backoff factor for other models
+    max_retries = 20
+    retry_delay = 60 if input_model_name == "sonar-deep-research" else 10
+    backoff_factor = 2
 
     for attempt in range(max_retries):
-        print("Top of for loop: max_retries=", max_retries, " attempt=", attempt, " retry_delay=", retry_delay)
+        print(f"Attempt {attempt + 1}/{max_retries}, delay: {retry_delay}s")
         try:
             if input_tool1:
                 print("running input_tool1: ", input_tool1)
-                
-                if input_tool1 == "openai_web_search":  
+                if input_tool1 == "openai_web_search":
                     print("Using OpenAI web search tool")
+                    return {"error": "OpenAI web search not implemented"}
                 elif input_tool1 == "brave_jina":
                     tools = [
                         Tool(
                             name="scrape_webpage_content",
                             func=scrape_webpage_content,
-                            description="Use this tool to scrape content from a webpage. Input should be the URL of the web page that you want to scrape. Output is the content of the page."
+                            description="Use this tool to scrape content from a webpage."
                         ),
                         Tool(
                             name="search_internet",
                             func=search_internet,
-                            description="Use this tool to search the internet. Input should be the search query. Output is a list of search results (Webpage titles and URLs) based on the query. Usually this is followed by a tool_call for scrape_webpage_content."
+                            description="Use this tool to search the internet."
                         )
                     ]
-
-                    prompt_1 = ChatPromptTemplate.from_messages(
-                        [
-                            ("system", "You are a helpful assistant"),
-                            ("human", "{input}"),
-                            ("placeholder", "{agent_scratchpad}"),
-                        ]
-                    )
-
+                    prompt_1 = ChatPromptTemplate.from_messages([
+                        ("system", "You are a helpful assistant"),
+                        ("human", "{input}"),
+                        ("placeholder", "{agent_scratchpad}")
+                    ])
                     agent = create_tool_calling_agent(llm=chat_model, tools=tools, prompt=prompt_1)
                     agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
                     response = agent_executor.invoke({"input": input_prompt_text})
-                    if isinstance(response, dict) and response.get("response_content", {}).get("error"):
-                        error_message = response["response_content"]["error"]
-                        print(f"PIE_AGENT_ERROR: {error_message}. Retrying... (Attempt {attempt + 1}/{max_retries})")
-                        raise Exception(error_message)
-                    else:
-                        print("PIE_AGENT_RESPONSE: ", response["output"])
-                        attempt = 1 # reset attempt since this succeeded
-                        return response["output"]
+                    return {"content": str(response.get("output", ""))}
             else:
                 chain = prompt_template | chat_model
                 response = chain.invoke(invoke_params)
                 if isinstance(response, dict) and response.get("response_content", {}).get("error"):
                     error_message = response["response_content"]["error"]
-                    print(f"PIE_COMPLETION_ERROR: {error_message}. Retrying... (Attempt {attempt + 1}/{max_retries})")
+                    print(f"PIE_COMPLETION_ERROR: {error_message}")
                     raise Exception(error_message)
                 else:
                     print("PIE_COMPLETION_RESPONSE: ", response)
-                    return response
+                    if hasattr(response, 'content'):
+                        return {"content": str(response.content)}
+                    elif isinstance(response, (str, dict)):
+                        return {"content": str(response)}
         except Exception as e:
-            print("Rory Exception: ", e)
+            print(f"Error: {str(e)}")
             if attempt < max_retries - 1:
-                if input_model_name == "sonar-deep-research":
-                    print(f"Rate limit detected for sonar-deep-research. Waiting 65 seconds before retry... (Attempt {attempt + 1}/{max_retries})")
-                    time.sleep(retry_delay)
-                else:
-                    print(f"Rate limit or error detected. Retrying in {retry_delay} seconds... (Attempt {attempt + 1}/{max_retries})")
-                    time.sleep(retry_delay)
-                    retry_delay *= backoff_factor  # Increase delay only for non-sonar-deep-research models
+                print(f"Retrying in {retry_delay}s...")
+                time.sleep(retry_delay)
+                if input_model_name != "sonar-deep-research":
+                    retry_delay *= backoff_factor
             else:
-                print("Max retries reached. Unable to complete the request.")
-                return {"error": "Rate limit exceeded or error detected. Please try again later."} 
+                return {"error": f"Failed after {max_retries} attempts: {str(e)}"}
 
+    return {"error": "Unexpected error occurred"}
 async def send_post_callback_v1(response_content: str, i_tokens: int, o_tokens: int, o_r_tokens: int, request_data: PieRequest) -> dict:
     # Use test URL if bubble_test is True, otherwise use live URL
     bubble_app_url = os.getenv("SYNSONA_BUBBLE_URL_TEST") if request_data.input_json.get("bubble_test") else os.getenv("SYNSONA_BUBBLE_URL_LIVE")
+
+    if not bubble_app_url:
+        return {"error": "Missing Bubble URL configuration"}
 
     print("Attempting to send post request (step=", request_data.step_id, ", app=", bubble_app_url)
 
@@ -292,17 +280,18 @@ async def send_post_callback_v1(response_content: str, i_tokens: int, o_tokens: 
                 response = await client.post(bubble_app_url, json=payload, headers=headers)
                 response.raise_for_status()
                 print("POST to bubble successful (", request_data.step_id, ") - Payload: ", payload)
-                return
+                return {"status": "success", "step_id": request_data.step_id}
         except httpx.ConnectTimeout:
             print(f"ConnectTimeout ({request_data.step_id}): Unable to reach {bubble_app_url}. Retrying... (Attempt {attempt + 1}/{max_retries})")
+            if attempt == max_retries - 1:
+                return {"error": f"Connection timeout after {max_retries} attempts"}
         except httpx.HTTPStatusError as e:
             print(f"HTTPStatusError: {e.response.status_code} - {e.response.text}")
-            break
+            return {"error": f"HTTP error {e.response.status_code}"}
         except Exception as e:
             print(f"Unexpected error: {e}")
-            break
+            return {"error": str(e)}
 
-    print("Max retries reached. Unable to send POST request.")
     return {"error": "Failed to send POST request after retries."}
 
 async def process_request_async_v1(request_data: PieRequest) -> dict:
@@ -317,21 +306,18 @@ async def process_request_async_v1(request_data: PieRequest) -> dict:
     # Normalize the output content
     if isinstance(response, dict):
         print("res dict: ", response)
-        normalized_response = response.get("content")
+        normalized_response = str(response.get("content", ""))
         usage = response.get("usage_metadata", {})
         input_tokens = usage.get("input_tokens", 0)
         output_tokens = usage.get("output_tokens", 0)
+    elif hasattr(response, 'content'):
+        normalized_response = str(response.content)
     else:
-        print("res str: ", response)
-
-    if hasattr(response, 'content'):  # Check if 'response' has 'content' attribute
-        normalized_response = response.content
-    else:
-        normalized_response = response
+        normalized_response = str(response)
 
     await send_post_callback_v1(normalized_response, input_tokens, output_tokens, -1, request_data)
 
-    return
+    return {"status": "success", "step_id": request_data.step_id}
 
 def process_request(request_data: PieRequest) -> dict:
     print("Starting process_request")
