@@ -142,7 +142,7 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
         elif input_model_name in ["sonar", "sonar-pro", "sonar-deep-research"]:
             from datetime import datetime, timedelta
             today = datetime.now()
-            one_year_ago = (today - timedelta(days=365)).strftime('%B 1, %Y')
+            six_months_ago = (today - timedelta(days=180)).strftime('%B 1, %Y')
             print("Using Sonar model: ", input_model_name)
             chat_model = ChatPerplexity(
                 model=input_model_name,
@@ -151,11 +151,11 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
                 model_kwargs={
                     "web_search_options": {
                         "search_context_size": "medium",
-                        "search_after_date_filter": one_year_ago
+                        "search_after_date_filter": six_months_ago
                     }
                 }
             )
-        elif input_model_name in ["o3-mini", "o3"]:
+        elif input_model_name in ["o4-mini", "o3"]:
             print("Using OpenAI reasoning model: ", input_model_name)
             chat_model = ChatOpenAI(
                 model=input_model_name,
