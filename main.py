@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
+from docs_api import DocsRequest, generate_docs
 import httpx
 import os
 import asyncio
@@ -77,6 +78,20 @@ async def pie_v1(request_data: PieRequest, http_request: Request):
 
 # Mount static files to /static path (after API endpoint definition)
 app.mount("/static", StaticFiles(directory="public", html=True), name="public")
+
+@app.post("/generate_docs")
+async def generate_docs_endpoint(request_data: DocsRequest, http_request: Request):
+    auth_header = http_request.headers.get("Authorization")
+    
+    if (auth_header is None or not auth_header.startswith("Bearer ")):
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    
+    token = auth_header.split(" ")[1]
+
+    if token == "syn-e5f3a7d6c9b4f2a1c9d9e7b6a3f1b2c4":
+        return await generate_docs(request_data, http_request)
+    else:
+        raise HTTPException(status_code=401, detail="Unauthorized")
 
 # Tool to scrape a website
 def scrape_webpage_content(url: str) -> str:

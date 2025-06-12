@@ -9,3 +9,6 @@ langchain-anthropic
 langchain-perplexity
 langchain-community
 python-dotenv
+google-auth-oauthlib
+google-auth-httplib2
+google-api-python-client
