@@ -32,10 +32,8 @@ def get_google_creds():
         # Check if all required environment variables are present
         missing_vars = [var for var in required_env_vars if not os.getenv(var)]
         if missing_vars:
-            raise ValueError(f"Missing required environment variables: {', '.join(missing_vars)}")
-
-        # Check if we're running on Railway
-        is_railway = bool(os.getenv('RAILWAY_ENVIRONMENT'))
+            raise ValueError(f"Missing required environment variables: {', '.join(missing_vars)}")        # Check if we're running on Railway
+        is_railway = bool(os.getenv('RAILWAY_PROD'))
         
         # Try to create credentials from refresh token if available
         if os.getenv("GOOGLE_REFRESH_TOKEN"):

@@ -64,8 +64,9 @@ async def pie_v1(request_data: PieRequest, http_request: Request):
         raise HTTPException(status_code=401, detail="Unauthorized")
     
     token = auth_header.split(" ")[1]
+    expected_token = os.getenv('SYNSONA_TOKEN')
 
-    if token == "syn-e5f3a7d6c9b4f2a1c9d9e7b6a3f1b2c4":
+    if token == expected_token:
         if request_data.bpstep_id:
             print("Headers: ", http_request.headers)
             print("Client: ", http_request.client.host if http_request.client else "No client info")
@@ -87,8 +88,9 @@ async def generate_docs_endpoint(request_data: DocsRequest, http_request: Reques
         raise HTTPException(status_code=401, detail="Unauthorized")
     
     token = auth_header.split(" ")[1]
+    expected_token = os.getenv('SYNSONA_TOKEN')
 
-    if token == "syn-e5f3a7d6c9b4f2a1c9d9e7b6a3f1b2c4":
+    if token == expected_token:
         return await generate_docs(request_data, http_request)
     else:
         raise HTTPException(status_code=401, detail="Unauthorized")
@@ -97,7 +99,7 @@ async def generate_docs_endpoint(request_data: DocsRequest, http_request: Reques
 def scrape_webpage_content(url: str) -> str:
     request_url = "https://r.jina.ai/" + url
     headers = {
-        "Authorization": "Bearer jina_56a782d10f5e4b71b9472f59577a4e0cDwU7yi_F5h2_r8C9I8YB2DyG6jei",
+        "Authorization": f"Bearer {os.getenv('JINA_API_KEY')}",
         "X-Return-Format": "markdown",
         "X-With-Links-Summary": "true"
     }
