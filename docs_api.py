@@ -91,347 +91,203 @@ def get_google_creds():
 def convert_markdown_to_docs_requests(text: str, start_index: int) -> Tuple[List[dict], int]:
     requests = []
     current_index = start_index
+    print("\n=== Starting Markdown Conversion ===")
+    print(f"Initial text length: {len(text)}")
+    print(f"Start index: {start_index}")
     
-    # Split text into paragraphs
-    paragraphs = text.split('\n')
-    processed_text = ''
-    style_ranges = []
-    list_items = []
-    link_ranges = []
-    bold_ranges = []  # Initialize bold_ranges list
+    # First collect ALL formatting locations
+    formats = []
     
-    # First process the paragraphs
-    for paragraph in paragraphs:
-        paragraph = paragraph.rstrip()
-        current_position = len(processed_text)
-        
-        if not paragraph:
-            processed_text += '\n'
-            continue
-            
-        # Handle headers
-        header_match = re.match(r'^(#{1,6})\s+(.+)$', paragraph)
-        if header_match:
-            level = len(header_match.group(1))
-            header_text = header_match.group(2)
-            processed_text += header_text + '\n'
-            style_ranges.append((
-                current_position + current_index,
-                current_position + len(header_text) + current_index,
-                f'HEADING_{level}'
-            ))
-            continue
-            
-        # Handle lists
-        list_match = re.match(r'^(\s*)([-*]|\d+\.)\s+(.+)$', paragraph)
-        if list_match:
-            indent = len(list_match.group(1))
-            list_type = 'NUMBERED_LIST' if list_match.group(2).endswith('.') else 'BULLET_LIST'
-            content = list_match.group(3)
-            
-            # Calculate positions
-            start_pos = len(processed_text) + current_index
-            processed_text += content + '\n'
-            end_pos = start_pos + len(content)  # Position before newline
-            # Store range for formatting
-            list_items.append((
-                start_pos,
-                start_pos + len(content),  # Don't include newline in range
-                list_type,
-                indent // 2
-            ))
-            continue
-        
-        # Regular paragraph
-        processed_text += paragraph + '\n'
-    
-    # Process links and bold text
-    final_text = processed_text
-    text_length = len(final_text)
-      # Initialize text positions - each position maps to its final position
-    text_positions = list(range(text_length))
-    print(f"\nStarting text processing with length: {text_length}")
-    print(f"Current index: {current_index}")
-
-    def validate_position(pos: int, context: str) -> bool:
-        """Validate a text position is within bounds"""
-        if pos < 0 or pos >= text_length:
-            print(f"Warning: Position {pos} out of bounds [0, {text_length}) in {context}")
-            return False
-        return True
-        
-    def update_positions(start: int, text_removed: int, text_added: int, context: str) -> None:
-        """Update position tracking after text modification"""
-        nonlocal text_length, text_positions, final_text
-        
-        if not validate_position(start, context):
-            return
-            
-        print(f"\nUpdating positions for {context}:")
-        print(f"Start: {start}, Removed: {text_removed}, Added: {text_added}")
-          # Update text length before calculating positions
-        text_length = len(final_text)
-        
-        # Calculate net change in length
-        delta = text_added - text_removed
-        
-        # Map each position to its new location
-        updated_positions = []
-        doc_length = text_length + current_index
-        
-        for pos in text_positions:
-            if pos < start:
-                # Keep positions before the edit point unchanged
-                updated_positions.append(pos)
-            else:
-                # For positions after the edit point:
-                # 1. Subtract start to make position relative to edit point
-                # 2. Add delta to account for length change
-                # 3. Add start back to make position absolute
-                # 4. Ensure position stays within document bounds
-                relative_pos = pos - start
-                shifted_pos = relative_pos + delta
-                new_pos = start + shifted_pos
-                
-                # Clamp to valid range
-                new_pos = max(start, min(new_pos, doc_length))
-                updated_positions.append(new_pos)
-        
-        # Update the text_positions array in place
-        text_positions[:] = updated_positions
-        
-        print(f"Positions updated: text_length={text_length}, doc_length={doc_length}")
-        print(f"Position range: {min(text_positions)} to {max(text_positions)}")
-
-    # Collect all links first
-    all_links = []
-    for match in re.finditer(r'\[([^\]]+)\]\(([^)]+)\)', final_text):
-        full_match = match.group(0)
-        link_text = match.group(1)
-        url = match.group(2)
-        start_pos = match.start()
-        end_pos = match.end()
-        
-        # Skip invalid positions
-        if not validate_position(start_pos, f"link {link_text} start") or \
-           not validate_position(end_pos - 1, f"link {link_text} end"):
-            continue
-        
-        all_links.append((start_pos, end_pos, link_text, url))
-
-    # Sort links in reverse order
-    all_links.sort(reverse=True)
-    print(f"\nCollected {len(all_links)} valid links")
-    
-    # Process links
-    for start_pos, end_pos, link_text, url in all_links:
-        try:
-            # Process the link text
-            text_before = final_text[:start_pos]
-            text_after = final_text[end_pos:]
-            final_text = text_before + link_text + text_after
-            
-            # Update text length after modification
-            text_length = len(final_text)
-            
-            print(f"\nProcessing link: {link_text}")
-            print(f"URL: {url}")
-            print(f"Original position: {start_pos} to {end_pos}")
-            
-            # Track position changes just once
-            chars_removed = end_pos - start_pos
-            chars_added = len(link_text)
-            update_positions(start_pos, chars_removed, chars_added, f"link {link_text}")
-            
-            # Calculate final position using mapped position
-            final_start = text_positions[start_pos]
-            final_end = final_start + len(link_text)
-            
-            # Validate final positions are within document bounds
-            if final_start >= 0 and final_end <= text_length:
-                print(f"Final text position: {final_start} to {final_end}")
-                link_ranges.append((final_start, final_end, url))
-                print(f"Stored link range: {final_start} to {final_end}")
-            else:
-                print(f"Warning: Link position out of bounds: {final_start} to {final_end}")
-                
-        except IndexError as e:
-            print(f"Warning: Invalid position while processing link {link_text}: {str(e)}")
-            continue
-            
-    # Process bold text with similar validation
-    bold_matches = []
-    for match in re.finditer(r'\*\*(.*?)\*\*', final_text):
-        start_pos = match.start()
-        end_pos = match.end()
-        content = match.group(1)
-        
-        if not validate_position(start_pos, f"bold {content} start") or \
-           not validate_position(end_pos - 1, f"bold {content} end"):
-            continue
-            
-        bold_matches.append((start_pos, end_pos, content))
-
-    bold_matches.sort(reverse=True)
-    print(f"\nCollected {len(bold_matches)} valid bold matches")    # Process bold text
-    for start_pos, end_pos, content in bold_matches:
-        try:
-            # Update the text first
-            text_before = final_text[:start_pos]
-            text_after = final_text[end_pos:]
-            final_text = text_before + content + text_after
-            
-            # Update text length after modification
-            text_length = len(final_text)
-            
-            print(f"\nProcessing bold text: {content}")
-            
-            # Track position changes and update tracking
-            chars_removed = end_pos - start_pos
-            chars_added = len(content)
-            update_positions(start_pos, chars_removed, chars_added, f"bold text {content}")
-            
-            # Calculate final positions using mapped position
-            final_start = text_positions[start_pos]
-            final_end = final_start + len(content)
-            
-            # Validate final positions are within document bounds
-            if final_start >= 0 and final_end <= text_length:
-                print(f"Final text position: {final_start} to {final_end}")
-                bold_ranges.append((final_start, final_end))
-                print(f"Stored bold range: {final_start} to {final_end}")
-            else:
-                print(f"Warning: Bold position out of bounds: {final_start} to {final_end}")
-                
-        except IndexError as e:
-            print(f"Warning: Invalid position while processing bold text {content}: {str(e)}")
-            continue
-    
-    print(f"\nFinal text length: {text_length}")
-      # Insert the processed text first
-    if final_text:
-        requests.append({
-            'insertText': {
-                'location': {'index': current_index},
-                'text': final_text
-            }
+    # Find headers (store full line ranges)
+    for match in re.finditer(r'^(#{1,6})\s+(.+?)(?:\s*#*\s*)?$', text, re.MULTILINE):
+        formats.append({
+            'type': 'header',
+            'start': match.start(),
+            'end': match.end(),
+            'level': len(match.group(1)),
+            'text': match.group(2).strip()
         })
-        
-        # Calculate document positions based on final text length
-        final_doc_length = current_index + len(final_text)
-        
-        # Apply link formatting
-        for text_start, text_end, url in link_ranges:
-            # Convert and validate text positions to document positions
-            doc_start = min(current_index + text_start, final_doc_length)
-            doc_end = min(current_index + text_end, final_doc_length)
-            
-            # Skip invalid ranges
-            if doc_start >= doc_end or doc_end > final_doc_length:
-                print(f"Skipping invalid link range: {doc_start} to {doc_end}")
-                continue
-            
-            print(f"Applying link at document range: ({doc_start}, {doc_end}), URL={url}")
-            requests.append({
-                'updateTextStyle': {
-                    'range': {
-                        'startIndex': doc_start,
-                        'endIndex': doc_end
-                    },
-                    'textStyle': {
-                        'link': {
-                            'url': url
-                        }
-                    },
-                    'fields': 'link'
-                }
+        print(f"Found header: '{match.group(2).strip()}' at {match.start()}-{match.end()}")
+    
+    # Find bold text
+    for match in re.finditer(r'\*\*(.*?)\*\*', text):
+        formats.append({
+            'type': 'bold',
+            'start': match.start(),
+            'end': match.end(),
+            'text': match.group(1)
+        })
+        print(f"Found bold: '{match.group(1)}' at {match.start()}-{match.end()}")
+    
+    # Find links
+    for match in re.finditer(r'\[([^\]]+)\]\(([^)]+)\)', text):
+        formats.append({
+            'type': 'link',
+            'start': match.start(),
+            'end': match.end(),
+            'text': match.group(1),
+            'url': match.group(2)
+        })
+        print(f"Found link: '{match.group(1)}' -> '{match.group(2)}' at {match.start()}-{match.end()}")
+    
+    # Sort formats from last to first
+    formats.sort(key=lambda x: x['start'], reverse=True)
+    print(f"\nFound {len(formats)} format regions")
+    
+    # Build a list of text segments and their formatting
+    segments = []
+    last_pos = len(text)
+    
+    print("\n=== Processing Text ===")
+    # Work backwards through the text
+    for fmt in formats:
+        # Add the text between this format and the last one
+        if fmt['end'] < last_pos:
+            segments.insert(0, {
+                'text': text[fmt['end']:last_pos],
+                'format': None
             })
-          # Apply bold formatting
-        for text_start, text_end in bold_ranges:
-            # Convert and validate text positions to document positions
-            doc_start = min(current_index + text_start, final_doc_length)
-            doc_end = min(current_index + text_end, final_doc_length)
+        
+        # Add this formatted segment
+        segments.insert(0, {
+            'text': fmt['text'],
+            'format': fmt
+        })
+        last_pos = fmt['start']
+    
+    # Add any remaining text at the start
+    if last_pos > 0:
+        segments.insert(0, {
+            'text': text[0:last_pos],
+            'format': None
+        })
+    
+    # Now build the document requests
+    clean_text = ''
+    format_ranges = []
+    current_pos = current_index
+    
+    print("\n=== Building Document ===")
+    for segment in segments:
+        # Add this segment's text
+        text_start = len(clean_text)
+        clean_text += segment['text']
+        text_end = len(clean_text)
+        
+        # Record formatting if any
+        if segment['format']:
+            fmt = segment['format']
+            doc_start = current_index + text_start
+            doc_end = current_index + text_end
             
-            # Skip invalid ranges
-            if doc_start >= doc_end or doc_end > final_doc_length:
-                print(f"Skipping invalid bold range: {doc_start} to {doc_end}")
+            print(f"Text: '{segment['text']}'")
+            print(f"Format: {fmt['type']} at {doc_start}-{doc_end}")
+            
+            format_ranges.append({
+                'type': fmt['type'],
+                'start': doc_start,
+                'end': doc_end,
+                'level': fmt.get('level'),
+                'url': fmt.get('url')
+            })
+    
+    # Insert the clean text
+    print(f"\n=== Inserting Clean Text ===")
+    print(f"Final text length: {len(clean_text)}")
+    requests.append({
+        'insertText': {
+            'location': {'index': current_index},
+            'text': clean_text
+        }
+    })
+    
+    # Apply all formatting
+    print("\n=== Applying Formatting ===")
+    for fmt in format_ranges:
+        try:
+            print(f"Applying {fmt['type']} at {fmt['start']}-{fmt['end']}")
+            
+            if fmt['type'] == 'header':
+                style_type = f'HEADING_{fmt["level"]}'
+                requests.append({
+                    'updateParagraphStyle': {
+                        'range': {
+                            'startIndex': fmt['start'],
+                            'endIndex': fmt['end']
+                        },
+                        'paragraphStyle': {
+                            'namedStyleType': style_type
+                        },
+                        'fields': 'namedStyleType'
+                    }
+                })
+            elif fmt['type'] == 'bold':
+                requests.append({
+                    'updateTextStyle': {
+                        'range': {
+                            'startIndex': fmt['start'],
+                            'endIndex': fmt['end']
+                        },
+                        'textStyle': {
+                            'bold': True
+                        },
+                        'fields': 'bold'
+                    }
+                })
+            elif fmt['type'] == 'link':
+                requests.append({
+                    'updateTextStyle': {
+                        'range': {
+                            'startIndex': fmt['start'],
+                            'endIndex': fmt['end']
+                        },
+                        'textStyle': {
+                            'link': {
+                                'url': fmt['url']
+                            }
+                        },
+                        'fields': 'link'
+                    }
+                })
+        except Exception as e:
+            print(f"ERROR processing {fmt['type']}: {str(e)}")
+            continue
+    
+    final_index = current_index + len(clean_text)
+    print(f"\n=== Conversion Complete ===")
+    print(f"Start index: {current_index}, Final index: {final_index}")
+    print("==========================\n")
+    return requests, final_index
+
+# Add formatting requests based on stored ranges
+def apply_formatting_requests(requests: List[dict], text: str, style_ranges: List[dict], current_index: int) -> None:
+    for style_range in style_ranges:
+        # Validate heading
+        if style_range['type'].startswith('HEADING_'):
+            # Ensure header range is at paragraph start
+            if not style_range.get('is_paragraph_start', False):
                 continue
                 
-            print(f"Applying bold at document range: ({doc_start}, {doc_end})")
-            requests.append({
-                'updateTextStyle': {
-                    'range': {
-                        'startIndex': doc_start,
-                        'endIndex': doc_end
-                    },
-                    'textStyle': {
-                        'bold': True
-                    },
-                    'fields': 'bold'
-                }
-            })
-        
-        # Apply header styles
-        for start, end, style_type in style_ranges:
-            print(f"Header range: ({start}, {end}), type={style_type}")
+            # Validate header text
+            header_text = text[style_range['start']:style_range['end']].strip()
+            if header_text != style_range['text']:
+                continue
+                
+            # Apply paragraph style
             requests.append({
                 'updateParagraphStyle': {
                     'range': {
-                        'startIndex': start,
-                        'endIndex': end
+                        'startIndex': style_range['start'] + current_index,
+                        'endIndex': style_range['end'] + current_index
                     },
                     'paragraphStyle': {
-                        'namedStyleType': style_type
+                        'namedStyleType': style_range['type']
                     },
                     'fields': 'namedStyleType'
                 }
             })
-            
-        # Apply list styles
-        for start, end, list_type, depth in list_items:
-            print(f"List range: ({start}, {end}), type={list_type}, depth={depth}")
-            
-            # Find the next newline after the start of content
-            next_newline = final_text.find('\n', start - current_index)
-            if next_newline == -1:
-                next_newline = len(final_text)
-                
-            # Adjust index to be document-relative
-            next_newline += current_index
-            
-            requests.append({
-                'updateParagraphStyle': {
-                    'range': {
-                        'startIndex': start,
-                        'endIndex': next_newline
-                    },
-                    'paragraphStyle': {
-                        'namedStyleType': 'NORMAL_TEXT',
-                        'indentStart': {
-                            'magnitude': depth * 36,
-                            'unit': 'PT'
-                        },
-                        'indentFirstLine': {
-                            'magnitude': depth * 36,
-                            'unit': 'PT'
-                        }
-                    },
-                    'fields': 'namedStyleType,indentStart,indentFirstLine'
-                }
-            })
-            requests.append({
-                'createParagraphBullets': {
-                    'range': {
-                        'startIndex': start,
-                        'endIndex': next_newline
-                    },
-                    'bulletPreset': 'NUMBERED_DECIMAL_NESTED' if list_type == 'NUMBERED_LIST' else 'BULLET_DISC_CIRCLE_SQUARE'
-                }
-            })
-    
-    final_index = current_index + len(final_text)
-    print(f"Start index: {current_index}, Final index: {final_index}")
-    return requests, final_index
+
+    # ...existing code for other formatting...
 
 from fastapi import Request as FastAPIRequest
 
@@ -522,7 +378,16 @@ async def generate_docs(request_data: DocsRequest, http_request: FastAPIRequest)
             })
             
             current_index += len(title) + 2  # +2 for the two newlines
-            
+              # Add a paragraph break before content to avoid section break issues
+            if current_index > 1:  # Skip for first section
+                requests.append({
+                    'insertText': {
+                        'location': {'index': current_index},
+                        'text': '\n'
+                    }
+                })
+                current_index += 1
+
             # Convert markdown content and get its requests
             content_requests, new_index = convert_markdown_to_docs_requests(content, current_index)
             requests.extend(content_requests)
