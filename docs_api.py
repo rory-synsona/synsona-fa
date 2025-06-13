@@ -359,7 +359,7 @@ async def generate_docs(request_data: DocsRequest, http_request: FastAPIRequest)
             requests.append({
                 'insertText': {
                     'location': {'index': current_index},
-                    'text': f"{title}\n\n"  # Add extra newline for better spacing
+                    'text': f"{title}\n"  # Single newline for less spacing
                 }
             })
             
@@ -377,7 +377,7 @@ async def generate_docs(request_data: DocsRequest, http_request: FastAPIRequest)
                 }
             })
             
-            current_index += len(title) + 2  # +2 for the two newlines
+            current_index += len(title) + 1  # +1 for the single newline
               # Add a paragraph break before content to avoid section break issues
             if current_index > 1:  # Skip for first section
                 requests.append({
