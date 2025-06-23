@@ -136,6 +136,7 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
     input_model_top_p = input_json_dict.get("model_top_p")
     input_bubble_test = input_json_dict.get("bubble_test", False)
     input_tool1 = input_json_dict.get("tool1")
+    input_model_response_format = input_json_dict.get("model_response_format")
     
     print("run_bpstep_generic: ", input_json_dict)
     
@@ -145,7 +146,8 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
     # Prepare model kwargs
     model_kwargs = {
         "top_p": float(input_model_top_p) if input_model_top_p is not None else 1.0,
-        "temperature": float(input_model_temp) if input_model_temp is not None else 0.7
+        "temperature": float(input_model_temp) if input_model_temp is not None else 0.7,
+        "response_format": input_model_response_format if input_model_response_format else None
     }
 
     try:
@@ -154,7 +156,8 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
             chat_model = ChatOpenAI(
                 model=input_model_name,
                 temperature=model_kwargs["temperature"],
-                top_p=model_kwargs["top_p"]
+                top_p=model_kwargs["top_p"],
+                model_kwargs={"response_format": model_kwargs["response_format"]} if model_kwargs["response_format"] else {}
             )
         elif input_model_name in ["sonar", "sonar-pro", "sonar-deep-research"]:
             from datetime import datetime, timedelta
