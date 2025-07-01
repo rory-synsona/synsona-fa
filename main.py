@@ -159,7 +159,7 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
                 top_p=model_kwargs["top_p"],
                 model_kwargs={"response_format": model_kwargs["response_format"]} if model_kwargs["response_format"] else {}
             )
-        elif input_model_name in ["sonar", "sonar-pro", "sonar-deep-research"]:
+        elif input_model_name in ["sonar", "sonar-pro", "sonar-deep-research", "sonar-reasoning"]:
             from datetime import datetime, timedelta
             today = datetime.now()
             six_months_ago = (today - timedelta(days=180)).strftime('%B 1, %Y')
@@ -175,17 +175,13 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
                     }
                 }
             )
-        elif input_model_name in ["o4-mini", "o3"]:
+        elif input_model_name in ["o4-mini", "o3", "o3-deep-research", "o4-mini-deep-research"]:
             print("Using OpenAI reasoning model: ", input_model_name)
             chat_model = ChatOpenAI(
                 model=input_model_name,
                 reasoning_effort="medium"
             )
-        elif input_model_name in [
-            "gemini-2.0-flash",
-            "gemini-2.0-flash-lite",
-            "gemini-2.5-pro-exp-03-25"
-        ]:
+        elif input_model_name in ["gemini-2.0-flash", "gemini-2.0-flash-lite", "gemini-2.5-pro"]:
             print("Using Google model: ", input_model_name)
             chat_model = ChatGoogleGenerativeAI(
                 model=input_model_name,
@@ -196,7 +192,8 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
             "claude-3-5-haiku-latest",
             "claude-3-5-sonnet-latest",
             "claude-3-7-sonnet-latest",
-            "claude-3-opus-latest"
+            "claude-sonnet-4-0",
+            "claude-opus-4-0"
         ]:
             print("Using Anthropic model: ", input_model_name)
             chat_model = ChatAnthropic(
@@ -267,6 +264,11 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
                         "citations": response.get("citations", []),
                         "search_results": response.get("search_results", [])
                     }
+                    # Pass through usage_metadata and response_metadata if present
+                    if "usage_metadata" in response:
+                        result["usage_metadata"] = response["usage_metadata"]
+                    if "response_metadata" in response:
+                        result["response_metadata"] = response["response_metadata"]
                     print("Extracted dict result:", result)
                     return result
                 elif hasattr(response, 'additional_kwargs'):  # Handle ChatPerplexity response
@@ -278,6 +280,11 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
                         "citations": citations,
                         "search_results": search_results
                     }
+                    # Pass through usage_metadata and response_metadata if present
+                    if hasattr(response, 'usage_metadata'):
+                        result["usage_metadata"] = getattr(response, 'usage_metadata', {})
+                    if hasattr(response, 'response_metadata'):
+                        result["response_metadata"] = getattr(response, 'response_metadata', {})
                     print("Extracted Perplexity result:", result)
                     return result
                 else:
@@ -294,7 +301,7 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
                 return {"error": f"Failed after {max_retries} attempts: {str(e)}"}
 
     return {"error": "Unexpected error occurred"}
-async def send_post_callback_v1(response_content: str, i_tokens: int, o_tokens: int, o_r_tokens: int, request_data: PieRequest) -> dict:
+async def send_post_callback_v1(response_content: str, i_tokens: int, o_tokens: int, o_r_tokens: int, request_data: PieRequest, citation_tokens=None, num_search_queries=None) -> dict:
     # Use test URL if bubble_test is True, otherwise use live URL
     bubble_app_url = os.getenv("SYNSONA_BUBBLE_URL_TEST") if request_data.input_json.get("bubble_test") else os.getenv("SYNSONA_BUBBLE_URL_LIVE")
 
@@ -315,6 +322,10 @@ async def send_post_callback_v1(response_content: str, i_tokens: int, o_tokens: 
         "o_tokens": o_tokens,
         "o_r_tokens": o_r_tokens,
     }
+    if citation_tokens is not None:
+        payload["citation_tokens"] = citation_tokens
+    if num_search_queries is not None:
+        payload["num_search_queries"] = num_search_queries
     headers = {"Content-Type": "application/json"}
 
     timeout = httpx.Timeout(60.0)  # seconds
@@ -370,9 +381,28 @@ async def process_request_async_v1(request_data: PieRequest) -> dict:
         
         print("Final normalized content:", content)    
         normalized_response = str(content)
+        # --- Token extraction logic ---
         usage = response.get("usage_metadata", {})
         input_tokens = usage.get("input_tokens", 0)
         output_tokens = usage.get("output_tokens", 0)
+        o_r_tokens = -1
+        citation_tokens = None
+        num_search_queries = None
+        # Also check for response_metadata['token_usage']
+        response_metadata = response.get("response_metadata", {})
+        token_usage = response_metadata.get("token_usage", {})
+        if token_usage:
+            input_tokens = token_usage.get("prompt_tokens", input_tokens)
+            output_tokens = token_usage.get("completion_tokens", output_tokens)
+            o_r_tokens = token_usage.get("completion_tokens_details", {}).get("reasoning_tokens", -1)
+        # --- NEW: Check for top-level 'usage' field ---
+        usage_top = response.get("usage", {})
+        if usage_top:
+            input_tokens = usage_top.get("prompt_tokens", input_tokens)
+            output_tokens = usage_top.get("completion_tokens", output_tokens)
+            o_r_tokens = usage_top.get("reasoning_tokens", o_r_tokens)
+            citation_tokens = usage_top.get("citation_tokens")
+            num_search_queries = usage_top.get("num_search_queries")
     elif hasattr(response, 'content'):
         print("Response is object with content attribute")
         content = response.content
@@ -392,12 +422,38 @@ async def process_request_async_v1(request_data: PieRequest) -> dict:
             
         print("Final normalized content from object:", content)
         normalized_response = str(content)
+        # --- Token extraction logic for object ---
+        usage = getattr(response, 'usage_metadata', {})
+        input_tokens = usage.get("input_tokens", 0)
+        output_tokens = usage.get("output_tokens", 0)
+        o_r_tokens = -1
+        citation_tokens = None
+        num_search_queries = None
+        response_metadata = getattr(response, 'response_metadata', {})
+        token_usage = response_metadata.get("token_usage", {})
+        if token_usage:
+            input_tokens = token_usage.get("prompt_tokens", input_tokens)
+            output_tokens = token_usage.get("completion_tokens", output_tokens)
+            o_r_tokens = token_usage.get("completion_tokens_details", {}).get("reasoning_tokens", -1)
+        # --- NEW: Check for top-level 'usage' field ---
+        usage_top = getattr(response, 'usage', {})
+        if usage_top:
+            input_tokens = usage_top.get("prompt_tokens", input_tokens)
+            output_tokens = usage_top.get("completion_tokens", output_tokens)
+            o_r_tokens = usage_top.get("reasoning_tokens", o_r_tokens)
+            citation_tokens = usage_top.get("citation_tokens")
+            num_search_queries = usage_top.get("num_search_queries")
     else:
         print("Response is neither dict nor has content attribute")
         normalized_response = str(response)
+        input_tokens = 0
+        output_tokens = 0
+        o_r_tokens = -1
+        citation_tokens = None
+        num_search_queries = None
 
     print("Final response being sent to callback:", normalized_response)
-    await send_post_callback_v1(normalized_response, input_tokens, output_tokens, -1, request_data)
+    await send_post_callback_v1(normalized_response, input_tokens, output_tokens, o_r_tokens, request_data, citation_tokens, num_search_queries)
 
     return {"status": "success", "step_id": request_data.step_id}
 
