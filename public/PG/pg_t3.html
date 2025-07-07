@@ -1,0 +1,2029 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <!-- Required Meta Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="description" content="%%description%%" />
+    <title>%%title%%</title>
+    <link id="icon" rel="icon" type="image/x-icon" href="https://www.lhh.com/Favicon.jpg"> 
+
+    <style>
+    /* Webfonts */
+    @font-face {
+      font-family: 'DaxlinePro';
+      src: url('https://cdn-uat.lhh.com/assets/lhh-vanilla/fonts/DaxlinePro-Bold.otf') format('opentype');
+      font-weight: 700;
+      }
+    @font-face {    
+      font-family: 'DaxlinePro';
+      src: url('https://cdn-uat.lhh.com/assets/lhh-vanilla/fonts/DaxlinePro-Medium.otf') format('opentype');
+      font-weight: 500;
+    }
+    @font-face {
+      font-family: 'DaxlinePro';
+      src: url('https://cdn-uat.lhh.com/assets/lhh-vanilla/fonts/DaxlinePro-Regular.otf') format('opentype');
+      font-weight: 400;
+    }
+    @font-face {    
+      font-family: 'DaxlinePro';
+      src: url('https://cdn-uat.lhh.com/assets/lhh-vanilla/fonts/DaxlinePro-Light.otf') format('opentype');
+      font-weight: 300;
+    }
+    @font-face {
+      font-family: 'Univers';
+      src: url('https://cdn-uat.lhh.com/assets/lhh-vanilla/fonts/UniversLTStd-Bold.otf') format('opentype');
+      font-weight: 700;
+    }
+    @font-face {
+      font-family: 'Univers';
+      src: url('https://cdn-uat.lhh.com/assets/lhh-vanilla/fonts/UniversLTStd.otf') format('opentype');
+      font-weight: 400;
+    }
+    @font-face {
+      font-family: 'Univers';
+      src: url('https://cdn-uat.lhh.com/assets/lhh-vanilla/fonts/UniversLTStd-Light.otf') format('opentype');
+      font-weight: 300;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+    html {
+      font-family: 'Univers', sans-serif;
+      font-size: 10px;
+      line-height: 10px;
+      scroll-behavior: smooth;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+    }
+    body.noScroll {
+      overflow: hidden;
+    }
+    .wrapper {
+      margin: 0 auto;
+      max-width: 144rem;
+      padding: 6rem 6.4rem;
+    }
+    .img-wrapper {
+      margin: 0 auto;
+      max-width: 144rem;
+    }
+    .header-bar {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo img {
+      max-width: 316px;
+    }
+    .bg-purple {
+      background-color: #FAF4FB;
+    }
+    a:focus {
+    outline: 2px solid blue;
+    outline-offset: 2px;
+  }
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 10px;
+      background: #4F185A;
+      color: white;
+      padding: 10px;
+      font-size: 1.2rem;
+      text-decoration: none;
+      z-index: 100;
+      border-radius: 5px;
+    }
+    .skip-link:focus {
+        top: 10px;
+        outline: 2px solid white;
+    }
+    h1, h2, h3, h4, h5, h6, p {margin: 0;}
+
+    /************ Navigation Menu ****************/
+    .menu {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .menu li {
+      margin: 0;
+    }
+    .menu a, .menu button {
+      text-decoration: none;
+      color: #333;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .desktop-nav {
+      display: flex;
+      justify-content: flex-end;
+      padding: 10px 20px;
+    }
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background:#FFFFFF;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      transition: transform 0.3s ease-in-out;
+      transform: translateX(-100%);
+    }
+    .mobile-nav.open {
+      transform: translateX(0);
+      z-index: 9999;
+    }
+    .hamburger {
+      display: none;
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: #4F185A;
+      cursor: pointer;
+      z-index: 10000;
+    }
+    .hamburger span {
+      display: block;
+      width: 25px;
+      height: 2px;
+      margin: 5px 0;
+      background-color: #4F185A;
+      transition: transform 0.3s ease-in-out;
+    }
+    .hamburger.open span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+    .hamburger.open span:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger.open span:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -5px);
+    }
+    a.nav-link {
+      font-family: 'Univers', sans-serif;
+      font-size: 1.6rem;
+      line-height: 2.4rem;
+      font-weight: 300;
+      padding: 0 30px;
+      color: #4F185A;
+      text-decoration: none;    
+    }
+    a.nav-button {
+      font-family: 'Univers', sans-serif;
+      font-size: 1.6rem;
+      line-height: 2.4rem;
+      font-weight: 300;
+      background-color: #4F185A;
+      color: #FFFFFF;
+      text-decoration: none;
+      padding: 6px 40px;
+      border-radius: 50px;
+    }
+    .nav-menu {
+      justify-content: space-between;
+    }
+    img {
+      width: 100%;
+      height: auto;
+    }
+
+
+    /************ Hero styles ************/
+    .hero-container {
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+      position: relative;
+      flex: 0 0 50%;
+    }
+    .hero-image img {
+      display: block;
+    }
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+    }
+    .hero-title h1 {
+      font-family: 'DaxlinePro', sans-serif;
+      color: #FFFFFF;
+      font-size: 6.4rem;
+      font-weight: 700;
+      font-style: normal;
+      line-height: 7.2rem;
+      letter-spacing: -0.32px;
+      margin: 0;
+      padding-bottom: 0.8rem;
+    }
+    .hero-sub-title {
+      font-family: 'DaxlinePro', sans-serif;
+      color: #FFFFFF;
+      font-size: 1.6rem;
+      font-style: normal; 
+      font-weight: 500;
+      line-height: 2.4rem;
+      padding-bottom: 1.6rem;
+    }
+    .hero-copy, .hero-subcopy {
+      color: #FFFFFF;
+      font-size: 1.6rem;
+      line-height: 2.4rem;
+      font-weight: 300;
+      margin:0;
+      padding-bottom: 2.4rem;
+    }
+    .hero-subcopy {
+      margin-top: 3rem;
+    }
+    .hero-split-image {
+      background-image: url('https://info.lhh.com/l/591171/2025-02-06/8rryl3/591171/1738885203Jh54SimB/hero_bckgrd_split_image.jpg');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      background-color: #4f185b;
+      min-height: 600px;
+      display: flex;
+    }
+    .mob-hero-image {
+      display: none;
+    }
+    .hero-bkgrd-image .wrapper {
+      display: flex;
+      align-content: stretch;
+      width: 100%;
+      align-items: flex-end;
+    }
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .hero-with-form {
+      display: flex;
+      background-image: url('https://info.lhh.com/l/591171/2025-02-06/8rryv9/591171/1738885231dsTZmP0l/hero_thread_bckgrd_color.jpg');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: top;
+      background-color: #4f185b;
+      min-height: 600px;
+      margin-bottom: 310px;
+    }
+    .hero-with-form .wrapper {
+      display: flex;
+      align-content: stretch;
+      align-items: center;
+    }
+    .hero-with-form .hero-container{
+      flex: 0 0 100%;
+      justify-content: space-between;
+      height: 100%;
+    }
+    .hero-left {
+      width: 80%;
+      justify-content: flex-end;
+    }
+    .hero-form {
+      width: 50%;
+      right: 0;
+      border-radius: 25px;
+      box-shadow: 0px 10px 24px 0px rgba(0, 0, 0, 0.10);
+      float: right;
+      margin-bottom: -200px;
+    }
+    .hero-with-form .hero-left .hero-title h1, .hero-split-image .hero-left .hero-title h1 {
+      font-size: 6.4rem;
+      line-height: 7.2rem;
+    }
+    .purple-white-grad {
+      background: linear-gradient(to left, #FFFFFF 50%, #4F185A 50%);
+    }
+    .white-purple-grad {
+      background: linear-gradient(to left, #4F185A 50%, #FFFFFF 50%);
+    }
+
+    /************ Portfolio Styles ************/
+    .portfolio-content {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-end;
+      align-content: space-between;
+      column-gap: 32px;
+      margin-bottom: 4rem;
+    }
+    .portfolio-description {
+      font-family: 'Univers', sans-serif;
+      font-size: 2.0rem;
+      line-height: 3.2rem;
+      font-style: normal;
+      font-weight: 300;
+      color: #4F185A;
+    }
+    .portfolio-container, .card-container, .col-container {
+      display: flex;
+      flex-direction: row;
+      gap: 32px;
+      align-content: space-between;
+      flex-wrap: wrap;
+    align-items: flex-start;
+    }
+    .portfolio-container.large .slider-track {
+      flex-wrap: wrap;
+    }
+    .portfolio-intro .wrapper {
+      padding-bottom: 6rem;
+    }
+    .portfolio-row .wrapper {
+      padding-top: 0;
+      padding-bottom: 6rem;
+    }
+    .bio-block, .card-col, .product-col {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      flex: 1 1 0;
+    }
+    .portfolio-container.large .bio-block {
+      flex: 1 1 18%;
+      padding-bottom: 30px;
+    }
+    .product-col, .card-col {
+      align-items: flex-start;
+      text-align: left;
+    }
+    .bio-block img {
+      max-width: 250px;
+      width: 100%;
+      height: auto;
+      padding-bottom: 12px;
+    }
+    .portfolio-heading h2 {
+      font-family: 'DaxlinePro', sans-serif;
+      font-style: normal;
+      font-weight: 700;
+      color: #4F185A;
+      font-size: 6.4rem;
+      line-height: 7.2rem;
+      letter-spacing: -0.32px;
+    }
+    .speaker-name {
+      font-family: 'Univers', sans-serif;
+      font-size: 2.0rem;
+      color: #4F185A;
+      font-style: normal;
+      font-weight: 700;
+      line-height: 2.4rem;
+      padding-bottom: 0.5rem;
+    }
+    .speaker-title {
+      font-family: 'Univers', sans-serif;
+      font-size: 1.6rem;
+      line-height: 2.4rem;
+      font-style: normal;
+      font-weight: 300;
+      letter-spacing: 0.048px;
+      color: #000000;
+    }
+
+    /************ Form Styles ************/
+    .form-section.dark {
+      background: #4F185A;
+      color: #FFFFFF;
+    }
+    .form-section.dark .wrapper {
+      padding: 6rem;
+    }
+    .form-section .wrapper {
+      padding: 6rem 0;
+    }
+    .form-section.full .wrapper {
+      padding: 0;
+    }
+    .form-section.purple-white .wrapper, .form-section.white-purple .wrapper, .form-section.white .wrapper {
+      background: none;
+    }
+    .form-content.dark, .pardot-form.dark {
+      background: #4F185A;
+      color: #FFFFFF;
+      padding: 6rem;
+    }
+    .form-content.light, .pardot-form.light {
+      background: #FFFFFF;
+      color: #000000;
+      padding: 6rem;
+    }
+    .form-content.light .form-tag, .pardot-form.light .form-title {
+      color: #4F185A;
+    }
+    .pardot-form.light.border {
+      border-radius: 20px;
+      border: solid 2px #4F185A;
+      padding: 4rem;
+    }
+    .pardot-form.light.rounded {
+      border-radius: 20px;
+    }
+    .form-container {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-evenly;
+      text-align: left;
+    }
+    .form-section.white {
+      color: #000000;
+    }
+    .form-content, .pardot-form {
+      flex: 1;
+    }
+    .form-tag h1 {
+      font-family: 'DaxlinePro', sans-serif;
+      font-size: 6.4rem;
+      line-height: 7.2rem;
+      letter-spacing: -0.76px;
+      font-weight: 700;
+      padding-bottom: 3rem;
+    }
+    .form-copy {
+      font-family: 'Univers', sans-serif;
+      text-align: left;
+      font-size: 1.6rem;
+      line-height: 2.4rem;
+      font-weight: 300;
+      width: 80%;
+    }
+    .form-title {
+      font-family: 'DaxlinePro', sans-serif;
+      font-size: 3.2rem;
+      line-height: 4.0rem;
+      font-weight: 700;
+      padding-bottom: 1.6rem;
+    }
+    /* Dark Form */
+    .pardot-form.dark input[type=text] {
+      background-color: transparent;
+      border-bottom: solid 1px #FFFFFF;
+      color: #FFFFFF;
+      font-size: 2rem;
+      font-weight: 700;
+      width: 100%;
+      padding: 12px 6px;
+      margin: 8px 0;
+      border: none;
+      border-bottom: solid 1px white;
+      border-radius: unset;
+    }
+    /*---
+    .pardot-form.dark input::placeholder {
+      color: #FFFFFF;
+      font-size: 2rem;
+      line-height: 3.2rem;
+      font-weight: 700;
+    }
+    ---*/
+    .pardot-form.dark input::placeholder {
+      color: transparent;
+    }
+    .pardot-form.dark select {
+      color: #ffffff;
+      background: transparent;
+      width: 100%;
+      border: none;
+      border-bottom: solid 1px #ffffff;
+      font-size: 2rem;
+      line-height: 3.2rem;
+      padding: 12px 6px;
+      font-weight: 700;
+      margin: .5rem 0;
+    }
+    .pardot-form.dark select option {
+      background-color: #4F185A;
+    }
+
+    .pardot-form.dark span.description a {
+      color: #FFFFFF;
+      text-decoration: underline;
+    }
+    .pardot-form.dark input[type="submit"] {
+      border: 0;
+      color: #FFFFFF;
+      font-size: 2rem;
+      line-height: 3.2rem;
+      padding: 0;
+    }
+    /* Light Form */
+    .pardot-form.light input[type=text] {
+      background-color: transparent;
+      border-bottom: solid 1px #000000;
+      color: #000000;
+      font-size: 2rem;
+      font-weight: 700;
+      width: 100%;
+      padding: 12px 6px;
+      margin: 8px 0;
+      border: none;
+      border-bottom: solid 1px #000000;
+      border-radius: unset;
+    }
+      .pardot-form.light input::placeholder {
+      color: #000000;
+      font-size: 2rem;
+      line-height: 3.2rem;
+      font-weight: 700;
+    }
+    .pardot-form.light select {
+      color: #000000;
+      background: transparent;
+      width: 100%;
+      border: none;
+      border-bottom: solid 1px #000000;
+      font-size: 2rem;
+      line-height: 3.2rem;
+      padding: 12px 6px;
+      font-weight: 700;
+      margin: .5rem 0;
+    }
+    .pardot-form.light select option {
+      background-color: #FFFFFF;
+    }
+    .pardot-form.light span.description a {
+      color: #000000;
+      text-decoration: underline;
+    }
+    .pardot-form.light input[type="submit"] {
+      border: 0;
+      color: #000000;
+      font-size: 2rem;
+      line-height: 3.2rem;
+      padding: 0;
+    }
+    .pardot-form.light.border .form-title {
+      color: #000000;
+    }
+    .pardot-form p.submit {
+      display: flex;
+      flex-direction: column;
+      justify-content: left;
+      align-items: center;
+      float: right;
+      margin-top: -11rem;
+      margin: -11rem 1rem 0 0;
+      cursor: pointer;
+    }
+    .pardot-form span.description {
+      font-family: 'Univers', sans-serif;
+      font-size: 1.6rem;
+      line-height: 2.4rem;
+      font-weight: 300;
+    }
+    .pardot-form p.submit input {
+      background: url(https://info.lhh.com/l/591171/2025-02-06/8rrz9w/591171/173888526545ybwwys/pink_submit_white_arrow.svg);
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      border: none;
+      width: 80px;
+      height: 125px;
+      background-repeat: no-repeat;
+      background-position: center top;
+      cursor: pointer;
+    }
+    .pardot-form .pd-checkbox {
+        width: 75%;
+    }
+    .pardot-form .errors, .pardot-form .error {
+      color: #EA1E80;
+    }
+    .required .field-label::after {
+      content: "*";
+      color: #F789A9;
+      vertical-align: super;
+      font-size: 1.2rem;
+      line-height: 0;
+      font-weight: 700;
+    }
+    .pardot-form.light .required .field-label::after {
+      color: #000000;
+    }
+    /********Form Labels as Placeholders*********/
+    .field-container {
+    position: relative;
+    margin-bottom: 20px;
+    }
+    /* Style the label to act as a placeholder initially */
+    .field-label {
+    position: absolute;
+    left: 0px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2rem;
+    line-height: 100%;
+    color: #fff;
+    transition: all 0.2s ease-in-out;
+    font-weight: 700;
+    pointer-events: none;
+    }
+    .light .field-label, .light .field-container:has(select:focus) label, .light .field-container:has(select:user-valid) label, .light .field-container:has(input:focus) label, .light .field-container:has(input:not(:placeholder-shown)) label, .light .field-container.filled label, .light .field-label a {
+      color: #000000;
+    }
+    /* Move label up when input is focused or has content 
+    .field-container:has(select:focus) label, .field-container:has(select:user-valid) label, .field-container:has(input:focus) label, .field-container:has(input:not(:placeholder-shown)) label {
+    top: 0px;
+    font-size: 1.2rem;
+    font-weight: 300;
+    color: #ffffff;
+    }*/
+    .field-container.filled label {
+    top: 0px;
+    font-size: 1.2rem;
+    color: #ffffff;
+    }
+    /* Checkbox Fix */
+    .field-label a {
+    color: #fff;
+    }
+    .dark .field-label a {
+      color: #F789A9;
+    }
+    .pd-checkbox label.field-label, .pd-radio label.field-label {
+        position: inherit;
+        transform: none;
+        margin-left: 0.6rem;
+        pointer-events: all;
+    }
+    .pd-checkbox label.field-label {
+        font-weight: 300;
+        font-size: 1.6rem !important;
+        line-height: 2.4rem;
+    }
+    
+    .pd-checkbox span.value, .pd-radio span.value {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    }
+    .pd-checkbox input[type="checkbox"], .pd-radio input[type="radio"]  {
+    margin-top: 6px;
+    }
+
+    .heading-section-cta .wrapper, .heading-section .wrapper {
+      padding: 4rem;
+    }
+    .section-title h2 {
+      font-family: 'DaxlinePro', sans-serif;
+      color: #4F185A;
+      font-size: 6.4rem;
+      line-height: 7.2rem;
+      letter-spacing: -0.32px;
+      text-align: center;
+      font-weight: 700;
+      padding: 4rem 4rem 1rem;
+    }
+    .spacer-line {
+      margin: 0 auto;
+      height: 1px;
+      display: block;
+      width: 13rem;
+      background: #AA0285;
+    }
+    .section-copy {
+      color: #000000;
+      font-size: 1.6rem;
+      line-height: 2.4rem;
+      text-align: center;
+      font-weight: 300;
+      width: 60%;
+      margin: 0 auto;
+      padding: 2rem 4rem;
+    }
+    .section-tagline {
+      font-family: 'DaxlinePro', sans-serif;
+      color: #4F185A;
+      font-size: 2.4rem;
+      font-style: normal;
+      font-weight: 700;
+      line-height: 3.2rem;
+      text-align: center;
+    }
+
+    /************ COLUMN STYLING ************/
+    .image-col, .copy-col {
+      display: flex;
+      flex: 1 0;
+    }
+    .copy-col {
+      flex-direction: column;
+    }
+    .card-col {
+      background-color: #4F185A;
+      color: #FFFFFF;
+      padding: 1.6rem 3.2rem;
+      border-radius: 8px;
+    }
+    .eyebrow {
+      font-family: 'DaxlinePro', sans-serif;
+      color: #AA0285;
+      font-size: 1.6rem;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 2.4rem;
+      padding-bottom: 1.6rem;
+    }
+    .heading {
+      font-family: 'DaxlinePro', sans-serif;
+      color: #4F185A;
+      font-size: 4rem;
+      font-style: normal;
+      font-weight: 700;
+      line-height: 4.8rem;
+      padding: 1.6rem 0;
+    }
+    .copy {
+      font-family: 'Univers', sans-serif;
+      font-size: 1.6rem;
+      font-style: normal;
+      font-weight: 300;
+      line-height: 2.4rem;
+      padding: 0 0 1.6rem 0;
+    }
+    .card-heading {
+      font-family: 'DaxlinePro', sans-serif;
+      font-size: 2.4rem;
+      font-style: normal;
+      font-weight: 700;
+      line-height: 3.2rem;
+      padding: 1.6rem 0;
+    }
+    .card-sub-heading {
+      font-family: 'DaxlinePro', sans-serif;
+      font-size: 1.6rem;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 2.4rem;
+      padding: 0 0 1.6rem;
+    }
+    .white {
+      color: #FFFFFF;
+    }
+    .pink {
+      color: #EA1E80;
+    }
+    .card-col img {
+      max-width: 40px;
+    }
+    .cta {
+      display: flex;
+      text-align: center;
+      text-transform: uppercase;
+      align-content: center;
+      padding-bottom: 4rem;
+      justify-content: center;
+    }
+    .cta a {
+      font-family: 'DaxlinePro', sans-serif;
+      display: flex;
+      align-items: center;    
+      font-size: 1.4rem;
+      line-height: 1.8rem;
+      font-weight: 700;
+      letter-spacing: 0.7px;
+      color: #4F185A;
+      text-decoration: none;
+    }
+    .cta.pill a {
+      display: block;
+      min-width: 240px;
+      padding: 1.8rem 3.2rem;
+      border-radius: 50px;
+      font-family: 'DaxlinePro', sans-serif;   
+      font-size: 1.4rem;
+      line-height: 2.4rem;
+      font-weight: 700;
+      letter-spacing: 0.7px;
+      text-decoration: none;
+      min-width: 240px;
+      text-align: center;
+    }
+    .cta.pill.primary a {
+      background: #EA1E80;
+      color: #FFFFFF;
+      border: solid 1px #EA1E80;
+    }
+    .cta.pill.secondary a {    
+      background: #FFFFFF;
+      border: solid 1px #4F185A;    
+      color: #4F185A;
+    }
+    .cta.pill.tertiary a {    
+      background: #4F185A;
+      border: solid 1px #4F185A;    
+      color: #FFFFFF;
+    }
+    .cta.pill.transparent a {    
+      background: transparent;
+      border: solid 1px #4F185A;    
+      color: #4F185A;
+    }
+    .cta.pill.left {
+      justify-content: left;
+    }
+    .cta.cardlink {
+      padding: 1.6rem 0;
+      text-transform: none;
+      justify-content: left;
+    }
+    .cta.cardlink a {
+      font-weight: 400;
+    }
+    .cta.cardlink a {
+      color: #F7A4C9;
+      font-size: 1.4rem;
+      line-height: 1.6rem;
+      letter-spacing: .28px;
+      text-decoration: underline;
+    }
+    .contact-arrow {
+      max-width: 30px;
+      margin-left: 10px;
+      transition: transform 0.3s ease-in-out;
+    }
+    .cta a:hover .contact-arrow {
+      transform: translate(10px);
+    }
+    .blocks .wrapper {
+      padding: 0 6.4rem 3.2rem;
+    }
+    .blocks .heading-section-cta .wrapper {
+      padding: 5.4rem 6.4rem 4.8rem;
+    }
+    .blocks .section-title {
+      padding: 0rem 4rem 1.25rem;
+    }
+    .blocks .cta.pill.transparent {
+      padding-bottom: 0;
+    }
+
+    /************ Youtube Modal Popup ************/
+    .video-player {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      position: relative;
+      width: 80%;
+      max-width: 800px;
+      background: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .modal-content h2 {
+      margin-top: 0px;
+      text-align: left;
+    }
+    .modal-content iframe {
+      width: 100%;
+      height: 450px;
+      border: none;
+    }
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 24px;
+      line-height: 14px;
+      color: #000000;
+      cursor: pointer;
+      background: none;
+      padding: 0;
+      border: none;
+  }
+    #thumbnailBtn {
+      border: none;
+      background-color: transparent;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+    }
+    .video-banner {
+      text-align: center;
+    }
+    .video-banner .section-title {
+      padding-top: 0;
+    }
+    #thumbnail {
+      width: 70%;
+      margin: 3rem 0 2rem;
+    }
+
+    /************ Contact Bar ************/
+    .contact-bar {
+      background: #AB70B7;
+      padding: 0;
+    }
+    .contact-bar .wrapper {
+      padding: 4.8rem 6.4rem;;
+    }
+    .contact-bar-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .contact-bar-title {
+      font-family: 'DaxlinePro', sans-serif;
+      color: #4F185A;
+      font-size: 4.0rem;
+      line-height: 4.8rem;
+      font-weight: 700;
+      padding-bottom: 4.0rem;
+    }
+    .contact-bar .cta {
+      padding-bottom: 0;
+    }
+
+    /************ Testimonials ************/
+    .testimonial .wrapper {
+      padding: 0 6.4rem 4rem;
+    }
+    .testimonial-container {
+      display: flex;
+      flex-direction: column;  
+      padding: 3.2rem;
+      background: #FFFFFF;
+      box-shadow: 0px 8px 24px 0px rgba(0, 0, 0, 0.14);
+      row-gap: 16px;
+    }
+    .quote-icon {
+      text-align: left;
+    }
+    .quote-icon img {
+      width: 3.2rem;
+    }
+    .testimonial.two-col .wrapper, .testimonial.three-col .wrapper {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-evenly;
+      column-gap: 24px;
+    }
+    .testimonial-content {
+      row-gap: 16px;
+      display: flex;
+      flex-direction: column;
+    }
+    .testimonial-copy {
+      font-family: 'DaxlinePro', sans-serif;
+      font-size: 2.4rem;
+      line-height: 3.2rem;
+      color: #000000;
+      font-weight: 400;
+    }
+    .author-copy {
+      display: flex;
+      flex-direction: row;
+      gap: 12px;
+    }
+    .author-image img {
+      max-width: 48px;
+    }
+    .author-details {
+      display: flex;
+      flex-direction: column;
+    }
+    .author-name {
+      font-family: 'Univers', sans-serif;
+      color: #4F185A;
+      font-size: 2.0rem;
+      font-weight: 700;
+      line-height: 32px;
+    }
+    .author-title {
+      font-family: 'Univers', sans-serif;
+      font-size: 1.6rem;
+      line-height: 2.4rem;
+      font-weight: 300;
+      letter-spacing: 0.048px;
+    }
+    .arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: none;
+      color: none;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      z-index: 1000;
+      width: 5rem;
+    }
+    .arrow.left {
+      left: 10px;
+    }
+    .arrow.right {
+      right: 10px;
+    }
+
+    /********** Slider styles **********/
+    .slider-track {
+      display: flex;
+      flex-direction: row;
+      column-gap: 24px;
+    }
+    .quote-container {
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      box-shadow: 0px 8px 24px 0px rgba(0, 0, 0, 0.14);
+      background: #FFFFFF;
+      padding: 3.2rem;
+    }
+    .slider-contrls, .prev, .next, .dots, .dot {
+      display: none;
+    }
+
+    /********** Footer *********/
+    .footer {
+      background: #000000;
+      color: #FFFFFF;
+    }
+    .footer .wrapper {
+        padding: 2rem 4rem;
+      }
+    .footer {
+      font-family: 'Univers', sans-serif;
+      font-size: 1.4rem;
+      line-height: 2.4rem;
+      font-weight: 300;
+      color: #FFFFFF;
+    }
+    .row {
+      display: flex;
+      flex-direction: row;
+      column-gap: 2rem;
+    }
+    .footer-col {
+      display: flex;
+      flex-direction: column;
+      padding: 2rem 0 5rem;
+      column-gap: 2rem;
+    }
+    .footer-col {
+      flex: 1 0 0%;
+    }
+    h3.footer-title {
+      margin-top: 0;
+      margin-bottom: 1.2rem;
+    }
+    .footer-title {
+      font-family: 'DaxlinePro', sans-serif;
+      color: #FFFFFF;
+      font-size: 3.2rem;
+      line-height: 4rem;
+      font-weight: 700;
+    }
+    .footer-copy {
+      color: #FFFFFF;
+      font-family: 'Univers', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 300;
+      line-height: 2.4rem;
+    }
+    .footer p {
+      margin: 0;
+    }
+    .footer-copy a {
+      font-family: 'DaxlinePro', sans-serif;
+      color: #AB70B7;
+      font-size: 1.4rem;
+      font-weight: 700;
+      line-height: 2.4rem;
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+    ul.footer-links {
+      list-style-type: none;
+      display: flex;
+      flex-direction: row;
+      column-gap: 3rem;
+      margin: 0;
+    }
+    .footer-links-item a, .item-links a {
+      color: #FFFFFF;
+      text-decoration: none;
+    }
+    .social-icons img {
+      width: 2.4rem;
+    }
+    .social-icons {
+      margin-left: auto;
+      padding-right: 4rem;
+      display: flex;
+      flex-direction: row;
+      column-gap: 12px;
+    }
+    .hide {
+      display: none;
+    }
+    .mob-hide {
+      display: block;
+    }
+    .mob-show {
+        display: none;
+    }
+
+
+   /***********  MEDIA QUERIES ****************/
+    @media screen and (max-width: 1439px) {
+      .wrapper {
+          padding: 2rem 4rem;
+      }
+      .logo img {
+        max-width: 275px;
+      }
+      a.nav-link {
+        padding: 0 15px;
+      }
+      .hero-title h1 {
+        font-size: 9rem;
+        line-height: 10rem;
+      }
+      .form-section .wrapper {
+        padding: 6rem 2rem;
+      }
+            
+    }
+    @media screen and (max-width: 1150px) {    
+      .four-col .product-col {
+        flex: 1 0;
+        max-width: 33.33%;
+      }
+    }
+    @media screen and (max-width: 1024px) {      
+    /******* Mobile Navigation Menu ************/
+      .desktop-nav {
+        display: none;
+      }
+      .hamburger {
+        display: block;
+      }
+      .mobile-nav {
+        display: flex;
+      }
+      .menu {
+        flex-direction: column;
+      }
+      .video-banner .wrapper {
+        padding: 6rem 4rem;
+      }
+      .hero-copy {
+        width: 70%;
+      }
+      .four-col .product-col {
+        flex: 1 0;
+      }
+      .form-container {
+        column-gap: 3rem;
+      }
+      .form-tag h1 {
+        font-size: 11.2rem;
+        line-height: 12.2rem;
+      }
+      .section-copy {
+        width: 65%;
+      }
+      .portfolio-container.large .bio-block {
+        flex: 1 1 content;
+      }
+      .testimonial-copy {
+        font-size: 2.2rem;
+        line-height: 2.8rem;
+      }
+      .author-name {
+        line-height: 2.4rem;
+        padding-bottom: 1rem;
+      }
+      .footer-title {
+        font-size: 2.4rem;
+        line-height: 3.2rem;
+      }
+    }
+    @media screen and (max-width: 800px) { 
+      .hero-bkgrd-image .wrapper {
+        padding: 0 0 2rem;
+      }
+      .hero-container {
+        flex-direction: column;
+        flex: 0 0 100%;
+      }
+      .hero-left {
+        padding: 2rem;
+        width: 100%;
+      }
+      .hero-split-image {
+        background: #4F185A;
+        min-height: unset;
+      }
+      .mob-hero-image {
+        display: block;
+      }
+      .mob-hero-image img {
+        width: 100%;
+        height: auto;
+      }
+      .product-col, .card-col, .bio-block, .portfolio-container.large .bio-block {
+        flex: 1 1 100%;
+      }
+      .four-col .product-col {
+        flex: 1 1 100%;
+        max-width: 100%;
+      }
+      .testimonial.two-col .wrapper, .testimonial.three-col .wrapper {
+        column-gap: 2.4rem;
+      }
+      .footer-col, .row, ul.footer-links {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .footer-col {
+        padding: 1rem 0;
+      }
+      ul.footer-links {
+        padding-left: 0;
+      }
+      .footer-copy {
+        padding-bottom: 2.4rem;
+      }
+      .social-icons {
+        padding-top: 3.2rem;
+        margin-left: 0;
+      }
+      .pardot-form.light input::placeholder, .pardot-form.dark input::placeholder {
+        font-size: 1.6rem;
+        line-height: 2rem;
+      }
+      .pardot-form.light select, .pardot-form.dark select, .pardot-form.light input[type=text], .pardot-form.dark input[type=text] {
+          font-size: 1.6rem;
+          line-height: 2rem;
+      }      
+      .form-tag h1 {
+        font-size: 8.2rem;
+        line-height: 9.2rem;
+      }
+      .section-copy {
+        width: 100%;
+      }
+      .left-topic-large img, .right-topic-small img, .right-topic-large img, .left-topic-small img {
+        max-height: unset;
+      }
+      .hero-form {
+        position: relative;
+        width: 100%;
+        float: none;
+        margin-bottom: 20px;
+      }
+      .purple-white-grad {
+        background: inherit;
+      }
+      .form-section.white {
+        padding: 2rem;
+      }
+      .wrapper {
+          padding: 2rem;
+      }
+      .mob-show {
+        display: block;
+      }
+      .mob-hide {
+        display: none;
+      }
+      .logo img {
+        max-width: 200px;
+      }
+      .hero-with-form {
+        background: #4F185A;
+        min-height: 100%;
+        margin-bottom: 0;
+      }
+      .hero-with-form .hero-container {
+        padding: 0 2rem;
+      }
+      .hero-left {
+        text-align: center;
+      }
+      .hero-title h1 {
+        font-size: 5.5rem;
+        line-height: 6.2rem;
+        letter-spacing: -2.545px;
+      }
+      .hero-copy, .hero-subcopy {
+        width: 100%;
+        font-size: 1.6rem;
+        line-height: 2.4rem;
+      }
+      .hero-tagline {
+        padding: 0 5rem;
+      }
+      .cta.pill.mob-center {
+        justify-content: center;
+      }
+      .form-tag h1 {
+        font-size: 5.6rem;
+        line-height: 6.4rem;
+        padding-bottom: 3rem;
+      }
+      .form-section.dark .wrapper {
+        padding: 2rem;
+      }
+      .form-content, .form-content.dark, .pardot-form.dark, .form-content.light, .pardot-form.light {
+        padding: 2rem;
+        text-align: center;
+      }
+      .section-title h2 {
+        font-size: 4rem;
+        line-height: 4.8rem;
+        padding-left: 0;
+        padding-right: 0;
+      }
+      .section-copy {
+        padding-left: 0;
+        padding-right: 0;
+        width: 95%;
+      }
+      .portfolio-content {
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+      }
+      .col-container.two-col {
+        flex-direction: column;
+      }
+      .testimonial.two-col .wrapper, .testimonial.three-col .wrapper {
+        flex-direction: column;
+      }
+      .image-col, .copy-col {
+        width: 100%;
+      }
+      .portfolio-container {
+        row-gap: 3.6rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .card-container {
+        row-gap: 3.6rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      .form-container {
+        flex-direction: column;
+        text-align: center;
+      }
+      .pardot-form {
+        padding: 3rem 0;
+      }
+      .form-section.dark .wrapper {
+        padding: 2rem 0;
+      }
+      .pardot-form.light.border {
+        padding: 2rem;
+      }
+      .pardot-form.light, .pardot-form.dark {
+        text-align: left;
+      }
+      .form-copy {
+        width: 100%;
+        text-align: center;
+      }
+      .pardot-form input::placeholder {
+        font-size: 1.6rem;
+        line-height: 2.0rem;
+      }
+      /*.pardot-form.light input[type=text], .pardot-form.dark input[type=text], .pardot-form.light select,.pardot-form.dark select, .field-label {
+        font-size: 1.6rem;
+        line-height: 2rem;
+      }*/
+      span.description {
+        font-size: 1.26rem;
+        line-height: 1.6rem;
+      }
+      .pardot-form .pd-checkbox, .pardot-form .pd-radio {
+        width: 100%;
+      }
+      .pardot-form p.submit {
+        float: none;
+        margin: 2rem 0 0;
+        align-items: flex-start;
+      }
+      .blocks .wrapper {
+        padding: 0 1.6rem 2.4rem;
+      }
+      .card-col {
+        flex-wrap: wrap;
+        padding: 2.4rem;
+      }
+      .testimonial .wrapper {
+        padding: 0 1.6rem 2rem;
+        gap: 2.4rem;
+      }
+      .testimonial-copy {
+        font-size: 2.0rem;
+        line-height: 3.2rem;
+      }     
+
+      .testimonials-section {
+        padding: 3rem 0;
+      }
+      /* Mobile Bios */
+      .bio-block, .portfolio-container.large .bio-block {
+        flex-wrap: wrap;
+        flex: 1 0 100%;
+        gap: 24px;
+        padding: 32px 0;
+      }
+
+      /* Mobile Testimonial */
+      .testimonial-container {
+        width: 100%;
+      }
+      .quote-icon {
+        text-align: left;
+      }
+      .testimonial {
+        padding: 0;
+        text-align: left;
+      }
+
+      /* Mobile Slider */
+      .slider-track {
+        display: flex;
+        transition: transform 0.5s ease;
+        column-gap: 0px;
+      }
+      .slider {
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0px 8px 24px 0px rgba(0, 0, 0, 0.14);
+      }
+      .portfolio-container.large .slider-track {
+        flex-wrap: nowrap;
+      }
+      .quote-container { 
+        min-width: 100%;
+        box-shadow: none;
+      }
+      .slider-contrls {
+        position: relative;
+        width: 85%;
+        height: 48px;
+        margin: 0px auto 30px auto;
+        display: grid;
+        place-items: center;
+      }
+      .prev, .next {
+        display: inline;
+        position: absolute;
+        color: #4F185A;;
+        border: none;
+        cursor: pointer;
+        height: 48px;
+        width: 48px;
+        border-radius: 24px;
+        background: none;
+      }
+      .prev { left: 10px; }
+      .next { right: 10px; }
+      .prev img, .next img {
+        width: 22px;
+        height: auto;
+      }
+      .dots {
+        display: flex;
+        text-align: center;
+        margin-top: -2px;
+        align-items: flex-start;
+      }
+      .dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        margin: 0 4px;
+        border-radius: 50%;
+        background-color: #AB70B7;
+        border: none;
+        cursor: pointer;
+      }
+      .dot.active {
+        background-color: #4F185A;
+      }
+      button.dot {
+        border: none;
+        padding: 0;
+        font: inherit;
+        line-height: inherit;
+        color: inherit;
+        line-height: inherit;
+        outline: none;
+      }
+
+      .footer .wrapper {
+        padding: 2rem;
+      }
+    }
+      
+    </style>
+  </head>
+
+<body>
+    <div class="page" role="main">
+      <div class="skip-links">
+        <a href="#footer" class="skip-link">Skip to Footer</a>
+      </div> 
+      <!-- LOGO AND NAVIGATION -->
+      <section class="header">
+          <div class="wrapper">
+              <div class="header-bar">
+                  <div class="logo" pardot-region="lhh-logo" pardot-region-type="WYSIWYG"><a href="https://www.lhh.com" target="_blank"><img src="https://info.lhh.com/l/591171/2025-01-14/8pckvn/591171/1736881998pt6kT026/LHH_logo_purple_tag.svg" alt="LHH - Recruitment Development Outplacement"></a></div>
+                  <div class="nav-container">
+                      <div class="desktop-nav">
+                        <ul class="menu">
+
+                          <li><a href="#contactus4" class="nav-button" target="_self">Contact Us</a></li>
+                        </ul>
+                      </div>
+                  
+                      <button class="hamburger" aria-label="Toggle navigation">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                      </button>
+                  
+                      <div class="mobile-nav">
+                        <ul class="menu">
+                          <li><a href="#contactus4" class="nav-button" target="_self">Contact Us</a></li>
+                        </ul>
+                      </div>
+                    </div>
+              </div>
+          </div>
+      </section>
+
+     
+
+      <!-- HERO SPLIT IMAGE -->
+      <section class="hero-split-image hero-bkgrd-image">
+        <div class="wrapper">
+          <div class="hero-container">
+            <div class="mob-hero-image" pardot-region="hsi-mobimage" pardot-region-type="WYSIWYG"><img src="https://info.lhh.com/l/591171/2025-02-06/8rrzp6/591171/17388853263RPzjTos/full_width_hero_mob.jpg" alt=""></div>
+            <div class="hero-left">
+              <div class="hero-title" pardot-region="hsi-heading" pardot-region-type="WYSIWYG"><h1><img src='//aa665a24cf8c657052d7df0577741efb.cdn.bubble.io/f1749795410505x482736063468949060/us.pg.com' style='width:50px; height:50px; border-radius: 100px; margin-right:16px;'>P&G's RTO Success</h1></div>
+              <div class="hero-copy" pardot-region="hsi-copy" pardot-region-type="WYSIWYG"><p>P&G's return-to-office challenges demand a fresh approach to workplace flexibility and employee wellbeing. LHH empowers you to create an engaging hybrid environment that drives retention and boosts team health.</p></div>
+              <div class="cta pill primary left mob-center" pardot-region="hsi-cta" pardot-region-type="WYSIWYG"><a href="placeholder2" target="_blank">placeholder1</a></div>
+            </div>
+          </div>
+        </div>
+      </section>		  
+	  
+<!-- 3 Column Product Blocks -->
+      <section class="3col-productblocks">
+        <div class="wrapper">
+          <div class="col-container three-col">
+            <div class="product-col">
+              <div pardot-region="product-3col-img" pardot-region-type="WYSIWYG"><img src="https://info.lhh.com/l/591171/2025-02-06/8rryjs/591171/1738885109nJHNaMAC/3_col_img_ph.jpg" alt=""></div>
+              <div class="heading" pardot-region="product-3col-heading" pardot-region-type="WYSIWYG"><h3>Culture</h3></div>
+              <div class="eyebrow" pardot-region="product-3col-eyebrow" pardot-region-type="WYSIWYG"><h4>Transform RTO</h4></div>
+              <div class="copy" pardot-region="product-3col-copy" pardot-region-type="WYSIWYG"><p>Our Culture & Leadership Consulting helps you co-design and implement flexible work models that boost engagement. We align your workplace strategy with employee needs, creating an inclusive environment that supports wellbeing and productivity.</p></div>
+              <div class="cta pill secondary left" pardot-region="product-3col-cta" pardot-region-type="WYSIWYG"><a href="placeholder4" target="_blank">placeholder3</a></div>
+            </div>
+            <div class="product-col">
+              <div pardot-region="product-3col-img2" pardot-region-type="WYSIWYG"><img src="https://info.lhh.com/l/591171/2025-02-06/8rryjs/591171/1738885109nJHNaMAC/3_col_img_ph.jpg" alt=""></div>          
+              <div class="heading" pardot-region="product-3col-heading2" pardot-region-type="WYSIWYG"><h3>Insights</h3></div>
+              <div class="eyebrow" pardot-region="product-3col-eyebrow2" pardot-region-type="WYSIWYG"><h4>Track Engagement</h4></div>
+              <div class="copy" pardot-region="product-3col-copy2" pardot-region-type="WYSIWYG"><p>Our Diagnostics & Assessments measure engagement levels, health risks, and turnover drivers. We transform complex data into clear insights that guide strategic decisions about workplace flexibility and reveal opportunities to enhance employee experience.</p></div>
+              <div class="cta pill secondary left" pardot-region="product-3col-cta2" pardot-region-type="WYSIWYG"><a href="placeholder6" target="_blank">placeholder5</a></div>
+            </div>
+            <div class="product-col">
+              <div pardot-region="product-3col-img3" pardot-region-type="WYSIWYG"><img src="https://info.lhh.com/l/591171/2025-02-06/8rryjs/591171/1738885109nJHNaMAC/3_col_img_ph.jpg" alt=""></div>           
+              <div class="heading" pardot-region="product-3col-heading3" pardot-region-type="WYSIWYG"><h3>Coach</h3></div>
+              <div class="eyebrow" pardot-region="product-3col-eyebrow3" pardot-region-type="WYSIWYG"><h4>Lead with Care</h4></div>
+              <div class="copy" pardot-region="product-3col-copy3" pardot-region-type="WYSIWYG"><p>World-class coaching through EZRA empowers your managers to lead with empathy in hybrid environments. We strengthen their ability to maintain team engagement, support wellbeing, and drive performance across diverse work arrangements.</p></div>
+              <div class="cta pill secondary left" pardot-region="product-3col-cta3" pardot-region-type="WYSIWYG"><a href="placeholder8" target="_blank">placeholder7</a></div>
+            </div>
+          </div>
+        </div>
+	  </section>
+	  
+      <!-- HEADING NO CTA -->
+      <section class="heading-section" role="region" aria-label="Heading">
+        <div class="wrapper">
+          <div class="section-title" pardot-region="no-cta-heading" pardot-region-type="WYSIWYG"><h2>Dutch Success: Mid-Career Excellence</h2></div>
+          <div class="spacer-line"></div>
+          <div pardot-region="no-cta-copy" pardot-region-type="WYSIWYG" class="section-copy"><p>Discover how we helped a leading manufacturer boost engagement and retain talent through personalized career development, achieving a 97% engagement rate during workplace transformation.</p></div>
+        </div>
+      </section>
+      
+      <!-- Testimonial - Single - No Carousel -->
+      <section class="testimonial single" role="region" aria-label="Testimonial One">
+        <div class="wrapper">        
+          <div class="testimonial-container">
+            <div class="quote-icon" pardot-region="testimonial-icon1" pardot-region-type="WYSIWYG">
+              <img src="https://info.lhh.com/l/591171/2025-02-06/8rs26w/591171/1738885589do5a2J0e/quote_icon.svg" alt="">
+            </div>
+            <div class="testimonial-content">
+              <div class="testimonial-copy" pardot-region="testimonial-copy1" pardot-region-type="WYSIWYG">
+                <p>“Some valuable aspects of the workshop were [identifying] which qualities of myself are important and which ones I would like to see reflected in my function/activities. Everyone had a say or was involved by the facilitator; it was an involved group and a safe environment.”</p>
+              </div>
+              <div class="author-copy">
+                <div class="author-image" pardot-region="testimonial-author-img1" pardot-region-type="WYSIWYG"><img src="https://info.lhh.com/l/591171/2025-02-06/8rs1k9/591171/17388855221jpJtJLA/bio_pic_ph.png" alt=""></div>
+                <div class="author-details">
+                  <div class="author-name" pardot-region="author-name1" pardot-region-type="WYSIWYG"><h3>Mid-Career Reflections program participant</h3></div>
+                  <div class="author-title" pardot-region="author-title1" pardot-region-type="WYSIWYG"><h4>Dutch Beverage Manufacturer</h4></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+	  
+<!-- HERO WITH FORM -->
+      <section class="hero-with-form hero-bkgrd-image">
+        <div class="wrapper">
+          <div class="hero-container">
+            <div class="hero-left">
+              <div class="hero-title" pardot-region-type="WYSIWYG" pardot-region="hwf-heading"><h1>Heading</h1></div>
+              <div class="hero-sub-title" pardot-region-type="WYSIWYG" pardot-region="hwf-subheading"><h2>Sub-heading</h2></div>
+              <div class="hero-copy" pardot-region-type="WYSIWYG" pardot-region="hwf-copy"><p>This is a placeholder.</p></div>
+            </div>
+            <div class="hero-form">
+              <div class="pardot-form light rounded">
+                <div class="form-title" pardot-region-type="WYSIWYG" pardot-region="hwf-formtitle"><h2>Contact Us</h2></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+        
+      <!-- Footer -->
+      <footer class="footer" id="footer">
+        <div class="wrapper">
+          <div class="row">
+              </div>
+            </div>
+            <!--<div class="footer-col">
+              <div class="footer-title" pardot-region="location-title" pardot-region-type="WYSIWYG"><h3>Our locations</h3></div>
+              <div class="footer-copy">
+                <p pardot-region="location-copy" pardot-region-type="WYSIWYG">
+                  With locations around the world we’re perfectly positioned to help you.</p>
+                <div pardot-region="location-link" pardot-region-type="WYSIWYG">
+                  <a href="https://">See Locations</a>
+                </div>
+              </div>
+            </div>-->
+          </div>
+          <div class="row stack">
+            <div class="footer-copy">
+              <p>© LHH <script>document.write(new Date().getFullYear())</script></p>
+            </div>
+            <ul class="footer-links">
+              <li class="footer-links-item" pardot-region="privacy-policy" pardot-region-type="WYSIWYG"><a class="footer-links-link" href="https://www.lhh.com/us/en/privacy-policy/" target="_blank">Privacy Policy</a></li>
+              <li class="footer-links-item" pardot-region="cookie-policy" pardot-region-type="WYSIWYG"><a class="footer-links-link" href="https://www.lhh.com/us/en/cookie-policy/" target="_blank">Cookie Policy</a></li>
+              <li class="footer-links-item" pardot-region="terms-conditions" pardot-region-type="WYSIWYG"><a class="footer-links-link" href="https://www.lhh.com/us/en/terms/" target="_blank">Terms and Conditions</a></li>
+            </ul>
+            <div class="social-icons">
+              <div class="social-icon" pardot-region="linkedin-social" pardot-region-type="WYSIWYG">
+                <a href="https://www.linkedin.com/company/lhhworldwide" target="blank">
+                  <img src="https://info.lhh.com/l/591171/2025-02-06/8rs26z/591171/1738885625MDPmcBPK/linkedin.svg" alt="LinkedIn">
+                </a>
+              </div>
+              <div class="social-icon" pardot-region="x-social" pardot-region-type="WYSIWYG">
+                <a href="https://x.com/lhh_global" target="_blank">
+                  <img src="https://info.lhh.com/l/591171/2025-03-04/8v75xz/591171/1741104990z9unvUi1/X.svg" alt="X">
+                </a>
+              </div>
+            </div>          
+          </div>
+        </div>
+      </footer>
+
+    </div>
+
+    <!-- Play Video / Modal Popup -->
+    <script>
+      // Get modal elements
+      const modal = document.getElementById('videoModal');
+      const thumbnail = document.getElementById('thumbnailBtn');
+      const videoContainer = document.getElementById('videoContainer'); // Target div instead of iframe
+      const closeModal = document.getElementById('closeModal');
+      const youtubeURL = 'https://player.vimeo.com/video/1060955924?dnt=1&badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479'; 
+
+      // Function to open modal and load video
+      function openVideoModal() {
+          modal.style.display = 'flex';
+          modal.setAttribute('aria-hidden', 'false');
+
+          if (!videoContainer.innerHTML) {
+              videoContainer.innerHTML = `<iframe title="vimeo-player" src="https://player.vimeo.com/video/1060955924?h=4ff048fd51" width="640" height="360" frameborder="0" allowfullscreen></iframe>`;
+              const iframe = videoContainer.querySelector('iframe');
+
+    // Listen for the load event on the iframe
+    iframe.addEventListener('load', function() {
+        // Create a new script element
+        const script = document.createElement('script');
+        script.src = 'https://player.vimeo.com/api/player.js';
+        script.async = true;
+        
+        // Append the script to the document
+        document.body.appendChild(script);
+    });
+          }
+          
+
+          closeModal.focus(); // Move focus to close button
+      }
+
+      window.onYouTubeIframeAPIReady = function() {
+          const player = new YT.Player('youtubePlayer', {
+              events: {
+                  'onStateChange': onPlayerStateChange
+              }
+          });
+      };
+
+      function onPlayerStateChange(event) {
+          if (event.data === YT.PlayerState.PLAYING) {
+              dataLayer.push({
+                  'event': 'youtube_video_start',
+                  'videoTitle': event.target.getVideoData().title,
+                  'videoId': event.target.getVideoData().video_id
+              });
+          }
+
+          if (event.data === YT.PlayerState.ENDED) {
+              dataLayer.push({
+                  'event': 'youtube_video_complete',
+                  'videoTitle': event.target.getVideoData().title,
+                  'videoId': event.target.getVideoData().video_id
+              });
+          }
+      }
+
+      // Function to close modal and remove video
+      function closeVideoModal() {
+          modal.style.display = 'none';
+          modal.setAttribute('aria-hidden', 'true');
+          
+          videoContainer.innerHTML = ""; // Remove iframe when closing
+          thumbnail.focus(); // Return focus to thumbnail button
+      }
+
+      // Event listeners
+      thumbnail.addEventListener('click', openVideoModal);
+      closeModal.addEventListener('click', closeVideoModal);
+      window.addEventListener('click', (event) => {
+          if (event.target === modal) {
+              closeVideoModal();
+          }
+      });
+      document.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape') {
+              closeVideoModal();
+          }
+      });
+    
+      // Mobile menu 
+      const hamburger = document.querySelector('.hamburger');
+      const mobileNav = document.querySelector('.mobile-nav');
+      const navLinks = document.querySelectorAll('.mobile-nav .menu a');
+      const body = document.body;
+
+      hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('open');
+        mobileNav.classList.toggle('open');
+        body.classList.toggle('noScroll');
+      });
+
+      navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+          hamburger.classList.remove('open');
+          mobileNav.classList.remove('open');
+          body.classList.remove('noScroll');
+        });
+      });
+      
+    </script>
+
+    <!-- Slider Carousel -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        // Find all carousels on the page
+        const carousels = document.querySelectorAll('.slider');
+        let slidersInitialized = false;
+        
+        // Initialize a specific slider
+        function initSlider(slider) {
+          const track = slider.querySelector('.slider-track');
+          const slides = Array.from(track.children);
+          const nextButton = slider.parentElement.querySelector('.next');
+          const prevButton = slider.parentElement.querySelector('.prev');
+          const dotsContainer = slider.parentElement.querySelector('.dots');
+          let currentIndex = 0;
+          
+          // Clear existing dots first
+          dotsContainer.innerHTML = '';
+          
+          // Create pagination dots dynamically
+          slides.forEach((slide, index) => {
+            const dot = document.createElement('button');
+            dot.classList.add('dot');
+            if(index === 0) dot.classList.add('active');
+            dot.setAttribute('data-index', index);
+            dot.setAttribute('aria-label', 'presentation');
+            dotsContainer.appendChild(dot);
+            
+            // Jump to slide on dot click
+            dot.addEventListener('click', function() {
+              currentIndex = parseInt(this.getAttribute('data-index'));
+              updateSlidePosition();
+            });
+          });
+          
+          // Update active dot
+          function updateDots() {
+            const dots = dotsContainer.querySelectorAll('.dot');
+            dots.forEach((dot, index) => {
+              dot.classList.toggle('active', index === currentIndex);
+            });
+          }
+          
+          // Update slider position
+          function updateSlidePosition() {
+            if (window.innerWidth <= 800) {
+              const slideWidth = slides[0].offsetWidth;
+              track.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+              updateDots();
+            } else {
+              // Reset transform in desktop view
+              track.style.transform = 'translateX(0)';
+            }
+          }
+          
+          // Button navigation
+          nextButton.addEventListener('click', function() {
+            if (window.innerWidth <= 800) {
+              currentIndex = (currentIndex + 1) % slides.length;
+              updateSlidePosition();
+            }
+          });
+          
+          prevButton.addEventListener('click', function() {
+            if (window.innerWidth <= 800) {
+              currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+              updateSlidePosition();
+            }
+          });
+          
+          // Touch support for this specific carousel
+          let startX = 0;
+          
+          slider.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+          });
+          
+          slider.addEventListener('touchend', (e) => {
+            if (window.innerWidth <= 800) {
+              const endX = e.changedTouches[0].clientX;
+              const diffX = startX - endX;
+              if (diffX > 50) {
+                // Swiped left: show next slide
+                nextButton.click();
+              } else if (diffX < -50) {
+                // Swiped right: show previous slide
+                prevButton.click();
+              }
+            }
+          });
+          
+          // Initial position
+          updateSlidePosition();
+          
+          // Return the update function so it can be called on resize
+          return updateSlidePosition;
+        }
+        
+        // Array to store update functions for each slider
+        const updateFunctions = [];
+        
+        // Handle responsiveness
+        function handleResponsive() {
+          if (window.innerWidth <= 800) {
+            // Mobile view - Initialize sliders if not already done
+            if (!slidersInitialized) {
+              carousels.forEach(carousel => {
+                updateFunctions.push(initSlider(carousel));
+              });
+              slidersInitialized = true;
+            }
+          } else {
+            // Desktop view - Reset all sliders
+            carousels.forEach(carousel => {
+              const track = carousel.querySelector('.slider-track');
+              track.style.transform = 'translateX(0)';
+            });
+          }
+          
+          // Call all update functions
+          updateFunctions.forEach(updateFn => updateFn());
+        }
+        
+        // Initial setup
+        handleResponsive();
+        
+        // Update on window resize
+        window.addEventListener('resize', handleResponsive);
+      });
+    </script>
+
+    <!--Form Placeholders-->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+      document.querySelectorAll(".field-container input").forEach((input) => {
+        input.setAttribute("placeholder", "");
+      });
+    });
+    document.querySelectorAll(".field-container select, .field-container input").forEach((element) => {
+        element.addEventListener("change", function () {
+            this.parentNode.classList.toggle("filled", this.value.trim() !== "");
+        });
+        element.addEventListener("focus", function () {
+            this.parentNode.classList.add("filled");
+        });
+        element.addEventListener("blur", function () {
+            if (!this.value.trim()) {
+                this.parentNode.classList.remove("filled");
+            }
+        });
+    });
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll("input[type='checkbox']").forEach(function(checkbox) {
+            let label = checkbox.nextElementSibling;
+            if (label && label.tagName.toLowerCase() === "label") {
+                checkbox.parentNode.insertBefore(label, checkbox.nextSibling);
+            }
+        });
+    });
+
+    </script>
+    <!-- Script for vimeo player -->
+    <script src=https://player.vimeo.com/api/player.js></script>
+
+    
+    <!-- Script for cookie selection -->
+
+    <script src="https://info.lhh.com/locale.js"></script>
+    
+
+    <!-- Google Tag Manager -->
+    <script>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != "dataLayer" ? "&l=" + l : "";
+        j.async = true;
+        j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, "script", "dataLayer", "GTM-WP6PMBD");
+    </script>
+    <!-- End Google Tag Manager -->
+
+  </body>
+
+</html>
