@@ -179,7 +179,8 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
             print("Using OpenAI reasoning model: ", input_model_name)
             chat_model = ChatOpenAI(
                 model=input_model_name,
-                reasoning_effort="medium"
+                reasoning_effort="medium",
+                use_responses_api=True
             )
         elif input_model_name in ["gemini-2.0-flash", "gemini-2.0-flash-lite", "gemini-2.5-pro"]:
             print("Using Google model: ", input_model_name)
