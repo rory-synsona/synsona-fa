@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
-from docs_api import DocsRequest, generate_docs
+from file_template_api import FileTemplateRequest, generate_file_from_template
 import httpx
 import os
 import asyncio
@@ -55,6 +55,15 @@ class PieRequest(BaseModel):
     step_id: str
     input_json: dict
 
+# Include routers for modular endpoints
+from docs_api import router as docs_router
+from file_template_api import router as file_template_router
+from placid_template_api import router as placid_template_router
+
+app.include_router(docs_router)
+app.include_router(file_template_router)
+app.include_router(placid_template_router)
+
 # Define API endpoint first
 @app.post("/pie/v1/")
 async def pie_v1(request_data: PieRequest, http_request: Request):
@@ -80,20 +89,6 @@ async def pie_v1(request_data: PieRequest, http_request: Request):
 # Mount static files to /static path (after API endpoint definition)
 app.mount("/static", StaticFiles(directory="public", html=True), name="public")
 
-@app.post("/generate_docs")
-async def generate_docs_endpoint(request_data: DocsRequest, http_request: Request):
-    auth_header = http_request.headers.get("Authorization")
-    
-    if (auth_header is None or not auth_header.startswith("Bearer ")):
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    
-    token = auth_header.split(" ")[1]
-    expected_token = os.getenv('SYNSONA_TOKEN')
-
-    if token == expected_token:
-        return await generate_docs(request_data, http_request)
-    else:
-        raise HTTPException(status_code=401, detail="Unauthorized")
 
 # Tool to scrape a website
 def scrape_webpage_content(url: str) -> str:

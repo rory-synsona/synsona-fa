@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import APIRouter, Request, HTTPException
 from pydantic import BaseModel
 from typing import Dict, List, Tuple
 import os
@@ -13,6 +13,9 @@ import re
 
 # Load environment variables
 load_dotenv()
+
+# Create APIRouter instance
+router = APIRouter()
 
 SCOPES = ['https://www.googleapis.com/auth/drive.file']
 
@@ -292,9 +295,9 @@ def apply_formatting_requests(requests: List[dict], text: str, style_ranges: Lis
 from fastapi import Request as FastAPIRequest
 
 async def generate_docs(request_data: DocsRequest, http_request: FastAPIRequest) -> dict:
+
     try:
         creds = get_google_creds()
-        
         # Create Drive API service
         drive_service = build('drive', 'v3', credentials=creds)
         docs_service = build('docs', 'v1', credentials=creds)
@@ -317,7 +320,7 @@ async def generate_docs(request_data: DocsRequest, http_request: FastAPIRequest)
                 fields='files(id, name)'
             ).execute()
             export_items = export_results.get('files', [])
-            
+
             if not export_items:
                 # Create 'Synsona Export' folder in root
                 export_metadata = {
@@ -328,7 +331,7 @@ async def generate_docs(request_data: DocsRequest, http_request: FastAPIRequest)
                 export_folder_id = export_folder.get('id')
             else:
                 export_folder_id = export_items[0].get('id')
-            
+
             # Create new folder inside Synsona Export folder
             folder_metadata = {
                 'name': request_data.folder_name,
@@ -347,13 +350,13 @@ async def generate_docs(request_data: DocsRequest, http_request: FastAPIRequest)
             'parents': [folder_id]
         }
         doc = drive_service.files().create(body=doc_metadata).execute()
-        
+
         # Get the document ID
         document_id = doc.get('id')
-          # Build requests for document content
+        # Build requests for document content
         requests = []
         current_index = 1
-        
+
         for title, content in request_data.response_values.items():
             # Insert title with proper spacing
             requests.append({
@@ -362,7 +365,7 @@ async def generate_docs(request_data: DocsRequest, http_request: FastAPIRequest)
                     'text': f"{title}\n"  # Single newline for less spacing
                 }
             })
-            
+
             # Apply TITLE style (instead of HEADING_1)
             requests.append({
                 'updateParagraphStyle': {
@@ -376,9 +379,9 @@ async def generate_docs(request_data: DocsRequest, http_request: FastAPIRequest)
                     'fields': 'namedStyleType'
                 }
             })
-            
+
             current_index += len(title) + 1  # +1 for the single newline
-              # Add a paragraph break before content to avoid section break issues
+            # Add a paragraph break before content to avoid section break issues
             if current_index > 1:  # Skip for first section
                 requests.append({
                     'insertText': {
@@ -391,7 +394,7 @@ async def generate_docs(request_data: DocsRequest, http_request: FastAPIRequest)
             # Convert markdown content and get its requests
             content_requests, new_index = convert_markdown_to_docs_requests(content, current_index)
             requests.extend(content_requests)
-            
+
             # Add newlines after content
             requests.append({
                 'insertText': {
@@ -399,18 +402,18 @@ async def generate_docs(request_data: DocsRequest, http_request: FastAPIRequest)
                     'text': "\n\n"
                 }
             })
-            
+
             current_index = new_index + 2
-        
+
         # Update the document content
         docs_service.documents().batchUpdate(
             documentId=document_id,
             body={'requests': requests}
         ).execute()
-        
+
         # Get the web view link for the document
         web_view_link = f"https://docs.google.com/document/d/{document_id}/edit"
-        
+
         # Update sharing permissions to anyone with the link can view
         drive_service.permissions().create(
             fileId=document_id,
@@ -419,7 +422,7 @@ async def generate_docs(request_data: DocsRequest, http_request: FastAPIRequest)
                 'role': 'reader'
             }
         ).execute()
-        
+
         return {
             "status": "success",
             "document_title": request_data.document_title,
@@ -427,6 +430,13 @@ async def generate_docs(request_data: DocsRequest, http_request: FastAPIRequest)
             "document_url": web_view_link,
             "step_id": request_data.step_id
         }
-        
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error creating document: {str(e)}")
+
+
+# Register endpoint with APIRouter
+from fastapi import Request as FastAPIRequest
+@router.post("/generate-docs")
+async def generate_docs_endpoint(request_data: DocsRequest, http_request: FastAPIRequest):
+    return await generate_docs(request_data, http_request)
