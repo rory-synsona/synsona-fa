@@ -255,8 +255,13 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
                 
                 # Extract response details based on type
                 if isinstance(response, dict):
+                    # Handle OpenAI responses_api format: list of dicts with 'type', 'text', 'annotations'
+                    content = response.get("text", response.get("content", ""))
+                    # If content is a list of dicts, extract the 'text' fields and join
+                    if isinstance(content, list) and all(isinstance(item, dict) and "text" in item for item in content):
+                        content = "".join(item["text"] for item in content)
                     result = {
-                        "content": str(response.get("text", response.get("content", ""))),
+                        "content": str(content),
                         "citations": response.get("citations", []),
                         "search_results": response.get("search_results", [])
                     }
