@@ -7,6 +7,7 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaInMemoryUpload
 import base64
 from dotenv import load_dotenv
+from drive_utils import build_strict_folder_path
 
 # Load environment variables
 load_dotenv()
@@ -147,14 +148,8 @@ async def generate_file_from_template(request_data: FileTemplateRequest, http_re
         else:
             export_folder_id = export_items[0].get('id')
 
-        # Build the strict folder path
-        folder_path = [
-            request_data.customer_id,
-            request_data.campaign_id,
-            request_data.wf_group_id,
-            request_data.wf_id,
-            f"{request_data.folder_name}_{request_data.step_id}"
-        ]
+        # Build the strict folder path using shared utility
+        folder_path = build_strict_folder_path(request_data)
         folder_id = get_or_create_nested_folder(drive_service, export_folder_id, folder_path)
 
         file_name = f"{request_data.file_title}.{request_data.file_extension}"
