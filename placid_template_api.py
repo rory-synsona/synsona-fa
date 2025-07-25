@@ -65,7 +65,25 @@ async def generate_image_from_template(request_data: PlacidTemplateRequest, http
                     await asyncio.sleep(30)
                     continue
                 elif response.status_code != 200:
-                    raise HTTPException(status_code=response.status_code, detail=f"Placid API error: {response.text}")
+                    # Send error details to callback URL
+                    error_payload = {
+                        "status": "error",
+                        "step_id": request_data.step_id,
+                        "error_message": response.text,
+                        "placid_status_code": response.status_code
+                    }
+                    if placid_callback_url:
+                        try:
+                            await client.post(placid_callback_url, json=error_payload)
+                        except Exception as callback_exc:
+                            print("[Placid Debug] Failed to send error to callback URL:", str(callback_exc))
+                    return {
+                        "status": "error",
+                        "file_title": f"Placid API error: {response.text}",
+                        "file_id": None,
+                        "file_url": None,
+                        "step_id": request_data.step_id
+                    }
                 placid_json = response.json()
                 placid_url = placid_json.get("url") or placid_json.get("image_url")
                 if not placid_url:
