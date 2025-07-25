@@ -1,0 +1,42 @@
+## PRODUCT IMAGE URL
+Brand approved images for each of our products/services:
+<product-image-urls>
+#our-product-image-urls
+</product-image-urls>
+
+{
+"#syn-hero-title": "<img src='#target-company-logo' style='width:50px; height:50px; border-radius: 100px; margin-right:16px;'> [[Hero title in 25 characters or less. Must be highly-relevant to the TRIGGER and #target-company-name. Must mention #target-company-friendly-name explicitly. Refer to the BRAND GUIDELINES for tone. IMPORTANT: 25 characters maximum]]",
+"#syn-hero-text": "[[Hero body text 250 characters or less. Concisely and clearly contextualize the TRIGGER for the #persona at #target-company-name and explain how #customer-company-name can help them achieve their goals. IMPORTANT: 250 characters maximum]]",
+
+[[Personalize the template by identifying #customer-company-name's top 3 most relevant PRODUCTS/SERVICES that could help #target-company-name achieve their goals relevant to the TRIGGER]]
+"#syn-item1-image": "[[The most relevant PRODUCT IMAGE URL for this product/service. IMPORTANT: 1 image URL maximum. URL must be used exactly as provided.]]",
+"#syn-item1-title": "[[Title for this product/service. IMPORTANT: 12 characters maximum]]",
+"#syn-item1-subtitle": "[[A concise and clear goal-oriented statement supported by the PRODUCT that matters to a #persona at #target-company-name and relevant to TRIGGER. IMPORTANT: 20 characters maximum]]",
+"#syn-item1-text": "[[Generate a value proposition statement for this product/service. Clearly and compellinigly explain why a customer would choose this specific product to address one or more implications of the TRIGGER. IMPORTANT: 300 characters maximum]]",
+"#syn-item1-cta-link": "[[The correct PRODUCT PAGE URL for this product/service. IMPORTANT: 1 URL maximum. Your response must include the entire URL as provided.]]",
+[[Same as above, but now for the 2nd PRODUCT]]
+"#syn-item2-image": "[[The most relevant PRODUCT IMAGE URL for this product/service. IMPORTANT: 1 image URL maximum. URL must be used exactly as provided.]]",
+"#syn-item2-title": "[[Title for this product/service. IMPORTANT: 12 characters maximum]]",
+"#syn-item2-subtitle": "[[A concise and clear goal-oriented statement supported by the PRODUCT that matters to a #persona at #target-company-name and relevant to TRIGGER. IMPORTANT: 20 characters maximum]]",
+"#syn-item2-text": "[[Generate a value proposition statement for this product/service. Clearly and compellinigly explain why a customer would choose this specific product to address one or more implications of the TRIGGER. IMPORTANT: 300 characters maximum]]",
+"#syn-item2-cta-link": "[[The correct PRODUCT PAGE URL for this product/service. IMPORTANT: 1 URL maximum. Your response must include the entire URL as provided]]",
+[[Same as above, but now for the 3rd PRODUCT]]
+"#syn-item3-image": "[[The most relevant PRODUCT IMAGE URL for this product/service. IMPORTANT: 1 image URL maximum. URL must be used exactly as provided.]]",
+"#syn-item3-title": "[[Title for this product/service. IMPORTANT: 12 characters maximum]]",
+"#syn-item3-subtitle": "[[A concise and clear goal-oriented statement supported by the PRODUCT that matters to a #persona at #target-company-name and relevant to TRIGGER. IMPORTANT: 20 characters maximum]]",
+"#syn-item3-text": "[[Generate a value proposition statement for this product/service. Clearly and compellinigly explain why a customer would choose this specific product to address one or more implications of the TRIGGER. IMPORTANT: 300 characters maximum]]",
+"#syn-item3-cta-link": "[[The correct PRODUCT PAGE URL for this product/service. IMPORTANT: 1 URL maximum. Your response must include the entire URL as provided]]",
+
+"#syn-form-title": "[[A concise statement that that puts a positive spin on the implications of TRIGGER. This will appear adjacent to a sales lead form. IMPORTANT: 35 characters maximum]]",
+"#syn-form-text": "[[Body text 300 characters maximum. Summarize #customer-company-name's specific products/services that align with the TRIGGER. The goal is to give #target-company-name confidence that we can support their needs thoroughly and convince them to submit the lead the form. IMPORTANT: 300 characters maximum]]",
+
+"#syn-casestudy-title": "[[A concise attention-grabbing title about the RELEVANT CASE STUDY from the TRIGGER. Imply we can help them achieve similar success. IMPORTANT: 40 characters maximum]]",
+"#syn-casestudy-subtitle": "[[Explain why this case study demonstrates #customer-company-name's expertise and experience with a similar company/industry or problem as the one resulting from the TRIGGER. IMPORTANT: 200 characters maximum]]",
+"#syn-casestudy-cta-link": "[[The correct CASE STUDY URL for this case study. IMPORTANT: 1 URL maximum. Your response must include the entire URL as provided]]",
+
+"#syn-quote-text": "[[The exact quote from the relevant case study in the TRIGGER.]]",
+"#syn-quote-person-name": "[[The name of the person who provided the quote in the relevant case study. If no name is given, provide their job title]]]]",
+"#syn-quote-company-name": "[[The name of the company of which the person who provided the quote came from. If no company name is given, use their Industry or sub-industry.]]",
+
+"#syn-bottom-title": "[[A concise, motivating, clear, QUESTION relevant to the TRIGGER. IMPORTANT: 40 characters maximum]]"
+}
