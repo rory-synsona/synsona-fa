@@ -127,6 +127,7 @@ def get_mime_type(file_extension: str) -> str:
 
 async def generate_file_from_template(request_data: FileTemplateRequest, http_request: FastAPIRequest) -> dict:
     try:
+        import urllib.parse
         creds = get_google_creds()
         drive_service = build('drive', 'v3', credentials=creds)
 
@@ -158,7 +159,9 @@ async def generate_file_from_template(request_data: FileTemplateRequest, http_re
             'name': file_name,
             'parents': [folder_id]
         }
-        media = MediaInMemoryUpload(request_data.text_content.encode('utf-8'), mimetype=mime_type, resumable=False)
+        # Decode the URL-encoded text_content before saving
+        decoded_text_content = urllib.parse.unquote(request_data.text_content)
+        media = MediaInMemoryUpload(decoded_text_content.encode('utf-8'), mimetype=mime_type, resumable=False)
         file = drive_service.files().create(
             body=file_metadata,
             media_body=media,
