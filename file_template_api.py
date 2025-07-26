@@ -158,9 +158,9 @@ async def generate_file_from_template(request_data: FileTemplateRequest, http_re
         file_metadata = {
             'name': file_name,
             'parents': [folder_id]
-        }
-        # Decode the URL-encoded text_content before saving
-        decoded_text_content = urllib.parse.unquote(request_data.text_content)
+        }   
+        # Decode the URL-encoded text_content before saving (handles both %XX and +)
+        decoded_text_content = urllib.parse.unquote_plus(request_data.text_content)
         media = MediaInMemoryUpload(decoded_text_content.encode('utf-8'), mimetype=mime_type, resumable=False)
         file = drive_service.files().create(
             body=file_metadata,
