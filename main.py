@@ -196,7 +196,8 @@ def run_bpstep_generic(request_data: PieRequest) -> dict:
                 model_name=input_model_name,
                 temperature=model_kwargs["temperature"],
                 timeout=60,
-                stop=None
+                stop=None,
+                max_tokens_to_sample=4096
             )
         else:
             return {"error": "Unknown model name. Please provide a valid model."}
